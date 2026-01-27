@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log-Breaker: PLATINUM EDITION (Fixed) 💎</title>
+    <style>
+        /* --- DESIGN SYSTEM --- */
+        :root {
+            --c-base: #0055AA;      /* BLAU */
+            --c-container: #718096; /* GRAU */
+            --c-cargo: #ED8936;     /* ORANGE */
+            --c-danger: #E53E3E;    /* ROT */
+            --c-action: #48BB78;    /* GRÜN */
+            --bg: #F7FAFC;
+        }
+
+        body {
+            font-family: 'Verdana', sans-serif;
+            background: var(--bg);
+            color: #2D3748;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 { text-align: center; margin-bottom: 5px; color: #2D3748; }
+        p.sub { text-align: center; color: #718096; max-width: 600px; margin-bottom: 40px; line-height: 1.5; }
+
+        .module {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 30px;
+            padding: 25px;
+            position: relative;
+            border-left: 10px solid var(--c-container);
+            transition: transform 0.2s;
+        }
+        
+        .module:hover { transform: translateY(-2px); }
+
+        .module-header {
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #A0AEC0;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .equation-stage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem; 
+            font-weight: bold;
+            font-family: 'Courier New', monospace; 
+            height: 140px;
+            background: #EDF2F7;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            /* MOBILE FIX: Wrap erlauben, falls es eng wird */
+            flex-wrap: wrap;
+            align-content: center;
+        }
+
+        .atom {
+            display: inline-block;
+            padding: 2px 5px;
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .log-box { color: var(--c-container); }
+        .base { font-size: 1rem; color: var(--c-base); vertical-align: sub; font-weight: bold;}
+        .cargo { color: var(--c-cargo); }
+        
+        .trigger {
+            color: var(--c-danger);
+            cursor: pointer;
+            border: 2px dashed var(--c-danger);
+            border-radius: 8px;
+            /* APPLE TOUCH TARGET FIX: Größeres Padding für Finger */
+            padding: 5px 10px; 
+            margin: 0 2px;
+            background: rgba(229, 62, 62, 0.05);
+            animation: pulse 2.5s infinite;
+            /* Verhindert Zoom beim Doppeltippen auf Mobile */
+            touch-action: manipulation; 
+        }
+        
+        .trigger:hover {
+            background: var(--c-danger);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(229, 62, 62, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0); }
+        }
+
+        .reset-btn {
+            background: transparent;
+            border: 1px solid #CBD5E0;
+            color: #718096;
+            padding: 8px 16px; /* Größer für Mobile */
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+        .reset-btn:hover { background: #E2E8F0; color: #2D3748; }
+
+        .explanation {
+            background: #fff;
+            color: #4A5568;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            padding-top: 10px;
+            border-top: 1px solid #EDF2F7;
+        }
+        
+        strong { color: var(--c-base); }
+
+        /* Helpers */
+        .vanish { opacity: 0 !important; transform: scale(0) !important; filter: blur(10px); }
+        .success-text { color: var(--c-action) !important; border-color: transparent !important; background: transparent !important; }
+
+        /* SANDBOX STYLES */
+        #sandbox {
+            border-left: 10px solid #805AD5; 
+            border: 2px solid #805AD5;
+            background: #fff;
+        }
+        #sandbox .module-header { color: #805AD5; }
+        
+        #sandbox .equation-stage {
+            height: auto !important; 
+            min-height: 160px;
+            padding: 30px;
+            overflow: visible;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            flex-direction: column; /* Mobile first: untereinander */
+        }
+        @media(min-width: 500px) {
+            .input-group { flex-direction: row; } /* Desktop: nebeneinander */
+        }
+
+        input#custom-input {
+            width: 100%;
+            padding: 15px; /* Dicker für Finger */
+            font-size: 1.1rem;
+            font-family: 'Courier New', monospace;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            outline: none;
+        }
+        input#custom-input:focus { border-color: #805AD5; }
+
+        button.action-btn {
+            background: #805AD5;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        button.action-btn:hover { background: #6B46C1; }
+
+        .helper-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .chip {
+            background: #EDF2F7;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .chip:hover { border-color: #805AD5; background: #E9D8FD; }
+
+    </style>
+</head>
+<body>
+
+    <h1>Log-Breaker PLATINUM 💎</h1>
+    <p class="sub">Jetzt mit allen Regeln und Mobile-Support.</p>
+
+    <div class="module" id="mod1">
+        <div class="module-header">
+            <span>REGEL 1: Der Rucksack (Potenzgesetz)</span>
+            <button class="reset-btn" onclick="resetMod1()">Nochmal</button>
+        </div>
+        <div class="equation-stage">
+            <span class="atom log-box">log<span class="base">a</span></span>
+            <span class="atom">(</span>
+            <span class="atom cargo">x</span>
+            <span class="atom trigger" id="trigger1" onclick="activateMod1()" style="vertical-align: super; font-size: 1.4rem; margin-left:-5px;">2</span>
+            <span class="atom">)</span>
+        </div>
+        <div class="explanation">
+            <strong>Situation:</strong> Im Logarithmus steht eine Hochzahl ($x^2$).<br>
+            <strong>Aktion:</strong> Klicke die rote 2. Sie springt nach vorne. Aus "Hoch 2" wird "Mal 2".
+        </div>
+    </div>
+
+    <div class="module" id="mod2">
+        <div class="module-header">
+            <span>REGEL 2: Platzmangel (Produktregel)</span>
+            <button class="reset-btn" onclick="resetMod2()">Nochmal</button>
+        </div>
+        <div class="equation-stage">
+            <span class="atom log-box">log<span class="base">a</span></span>
+            <span class="atom">(</span>
+            <span class="atom cargo">x</span>
+            <span class="atom trigger" id="trigger2" onclick="activateMod2()" style="margin: 0 5px;">•</span>
+            <span class="atom cargo">y</span>
+            <span class="atom">)</span>
+        </div>
+        <div class="explanation">
+            <strong>Situation:</strong> Im Logarithmus wird multipliziert ($x \cdot y$).<br>
+            <strong>Aktion:</strong> Klicke den Punkt. Der Logarithmus platzt auseinander. Aus "Mal" wird "Plus".
+        </div>
+    </div>
+
+    <div class="module" id="mod3">
+        <div class="module-header">
+            <span>REGEL 3: Der Keller (Quotientenregel)</span>
+            <button class="reset-btn" onclick="resetMod3()">Nochmal</button>
+        </div>
+        <div class="equation-stage">
+            <span class="atom log-box">log<span class="base">a</span></span>
+            <div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;">
+                <span class="atom cargo">x</span>
+                <span class="atom trigger" id="trigger3" onclick="activateMod3()" style="width: 40px; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span>
+                <span class="atom cargo" id="y-val">y</span>
+            </div>
+        </div>
+        <div class="explanation">
+            <strong>Situation:</strong> Ein Bruch ($x$ geteilt durch $y$).<br>
+            <strong>Aktion:</strong> Klicke den Bruchstrich. Das $y$ kommt hoch, muss aber ein "Minus" akzeptieren.
+        </div>
+    </div>
+
+    <div class="module" id="mod4" style="border-left-color: var(--c-base);">
+        <div class="module-header">
+            <span>REGEL 4: Die Zwillinge (Basis Match)</span>
+            <button class="reset-btn" onclick="resetMod4()">Nochmal</button>
+        </div>
+        <div class="equation-stage">
+            <span class="atom log-box" id="log2-atom">log<span class="base">2</span></span>
+            <span class="atom">(</span>
+            <span class="atom trigger" id="base-match-trigger" onclick="activateMod4()" style="font-weight:bold; color:var(--c-base);">2</span>
+            <span class="atom cargo" id="power-x" style="vertical-align: super; font-size: 1.4rem;">x</span>
+            <span class="atom">)</span>
+        </div>
+        <div class="explanation">
+            <strong>Situation:</strong> Basis (2) und Zahl (2) sind gleich.<br>
+            <strong>Aktion:</strong> Klicke die rote 2. Sie fressen sich auf. Nur $x$ bleibt.
+        </div>
+    </div>
+
+    <div class="module" id="mod5" style="border-left-color: #2D3748;">
+        <div class="module-header">
+            <span>REGEL 5: Todfeinde (ln und e)</span>
+            <button class="reset-btn" onclick="resetMod5()">Nochmal</button>
+        </div>
+        <div class="equation-stage">
+            <span class="atom trigger" id="ln-atom" onclick="activateMod5()">ln</span>
+            <span class="atom">(</span>
+            <span class="atom base" id="e-atom" style="font-size: 1.8rem;">e</span>
+            <span class="atom cargo" id="ln-x" style="vertical-align: super; font-size: 1.4rem;">x</span>
+            <span class="atom">)</span>
+        </div>
+        <div class="explanation">
+            <strong>Situation:</strong> $ln$ trifft auf $e$.<br>
+            <strong>Aktion:</strong> Klicke "ln". Sie vernichten sich. Nur $x$ bleibt.
+        </div>
+    </div>
+
+    <div class="module" id="mod6" style="border-left-color: var(--c-action);">
+        <div class="module-header">
+            <span>REGEL 6: Log von 1</span>
+            <button class="reset-btn" onclick="resetMod6()">Nochmal</button>
+        </div>
+        <div class="equation-stage" id="stage6">
+            <span class="atom log-box">log<span class="base">10</span></span>
+            <span class="atom">(</span>
+            <span class="atom trigger" id="one-trigger" onclick="activateMod6()">1</span>
+            <span class="atom">)</span>
+        </div>
+        <div class="explanation">
+            <strong>Situation:</strong> Logarithmus von 1.<br>
+            <strong>Aktion:</strong> Klicke die 1. Ergebnis ist immer 0.
+        </div>
+    </div>
+
+    <div class="module" id="mod7" style="border-left-color: #000;">
+        <div class="module-header">
+            <span>NEU: REGEL 7: Der Turm (Inverse Eigenschaft)</span>
+            <button class="reset-btn" onclick="resetMod7()">Nochmal</button>
+        </div>
+        <div class="equation-stage">
+            <div style="display:flex; align-items:flex-start;">
+                <span class="atom base" id="tower-base" style="font-size: 3rem; margin-top: 20px; margin-right:5px;">a</span>
+                <div style="display:flex; align-items:center; margin-bottom: 20px;">
+                    <span class="atom trigger" id="tower-log" onclick="activateMod7()" style="font-size: 1.5rem;">log<sub style="color:var(--c-base)">a</sub></span>
+                    <span class="atom cargo" id="tower-x" style="font-size: 1.5rem; margin-left:2px;">(x)</span>
+                </div>
+            </div>
+        </div>
+        <div class="explanation">
+            <strong>Situation:</strong> Die Basis unten ($a$) und die Basis im Logarithmus oben ($log_a$) sind gleich.<br>
+            <strong>Aktion:</strong> Klicke auf "log". Basis und Logarithmus löschen sich aus. Das $x$ fällt runter auf den Boden.
+        </div>
+    </div>
+
+    <div class="module" id="mod8" style="border-left-color: #805AD5;">
+        <div class="module-header">
+            <span>NEU: REGEL 8: Die Wurzel (Tarnkappe)</span>
+            <button class="reset-btn" onclick="resetMod8()">Nochmal</button>
+        </div>
+        <div class="equation-stage" id="root-stage">
+            <span class="atom log-box">log</span>
+            <span class="atom">(</span>
+            <span class="atom trigger" id="root-symbol" onclick="activateMod8()" style="font-size: 2.5rem; margin-right:-10px;">√</span>
+            <span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">x</span>
+            <span class="atom">)</span>
+        </div>
+        <div class="explanation">
+            <strong>Situation:</strong> Eine Wurzel $\sqrt{x}$. Das sieht böse aus.<br>
+            <strong>Aktion:</strong> Klicke die Wurzel. Sie verwandelt sich in den Exponenten $\frac{1}{2}$ (Rucksack). Danach gilt Regel 1!
+        </div>
+    </div>
+
+    <div class="module" id="sandbox">
+        <div class="module-header">
+            <span>🧪 DEINE SANDBOX (JETZT NOCH SCHLAUER)</span>
+            <button class="reset-btn" onclick="clearSandbox()">Leeren</button>
+        </div>
+        
+        <div class="helper-chips">
+            <span class="chip" onclick="setInput('a^(log_a(x))')">Der Turm</span>
+            <span class="chip" onclick="setInput('log(sqrt(x))')">Die Wurzel</span>
+            <span class="chip" onclick="setInput('log(x^2 * y / z)')">Der Klassiker</span>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="custom-input" placeholder="Tippe z.B. log(sqrt(x)) ...">
+            <button class="action-btn" onclick="parseInput()">Händchenmodus Starten 🖐️</button>
+        </div>
+
+        <div class="equation-stage" id="sandbox-stage">
+            <span style="color:#A0AEC0; font-size:1.2rem;">Warte auf Eingabe...</span>
+        </div>
+        
+        <div class="explanation" id="sandbox-text">
+            Tippe oben eine Aufgabe ein. Jetzt auch mit <code>sqrt(x)</code> und Türmen.
+        </div>
+    </div>
+
+
+<script>
+    // =================================================================
+    // LOGIK FÜR MODULE 1-6 (ALTE REGELN)
+    // =================================================================
+
+    // REGEL 1: Rucksack
+    function activateMod1() {
+        const t = document.getElementById('trigger1');
+        t.style.transform = "translate(-180px, 0px)"; t.style.color = "var(--c-action)"; t.style.borderColor = "transparent"; t.style.background = "transparent"; t.style.zIndex = "100";
+        setTimeout(() => { document.querySelector('#mod1 .equation-stage').innerHTML = `<span class="atom success-text" style="font-size: 2.2rem; margin-right: 10px;">2 •</span><span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom">)</span>`; }, 300);
+    }
+    function resetMod1() {
+        document.querySelector('#mod1 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom trigger" id="trigger1" onclick="activateMod1()" style="vertical-align: super; font-size: 1.4rem; margin-left:-5px;">2</span><span class="atom">)</span>`;
+    }
+
+    // REGEL 2: Produkt
+    function activateMod2() {
+        document.querySelector('#mod2 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom cargo">(x)</span><span class="atom success-text" style="font-size:3rem; margin:0 15px; animation:popIn 0.5s;">+</span><span class="atom log-box" style="animation:popIn 0.5s;">log<span class="base">a</span></span><span class="atom cargo">(y)</span>`;
+    }
+    function resetMod2() {
+        document.querySelector('#mod2 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom trigger" id="trigger2" onclick="activateMod2()" style="margin: 0 5px;">•</span><span class="atom cargo">y</span><span class="atom">)</span>`;
+    }
+
+    // REGEL 3: Bruch
+    function activateMod3() {
+        document.querySelector('#mod3 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom cargo">(x)</span><span class="atom success-text" style="font-size:3rem; margin:0 15px; animation:popIn 0.5s;">-</span><span class="atom log-box" style="animation:popIn 0.5s;">log<span class="base">a</span></span><span class="atom cargo">(y)</span>`;
+    }
+    function resetMod3() {
+        document.querySelector('#mod3 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;"><span class="atom cargo">x</span><span class="atom trigger" id="trigger3" onclick="activateMod3()" style="width: 40px; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span><span class="atom cargo" id="y-val">y</span></div>`;
+    }
+
+    // REGEL 4: Zwillinge
+    function activateMod4() {
+        const logPart = document.getElementById('log2-atom');
+        const trigger = document.getElementById('base-match-trigger');
+        const x = document.getElementById('power-x');
+        logPart.classList.add('vanish'); trigger.classList.add('vanish');
+        setTimeout(() => { x.style.transform = "translate(-60px, 30px) scale(2)"; x.style.color = "var(--c-action)"; x.style.verticalAlign = "middle"; x.innerText = "x"; }, 200);
+    }
+    function resetMod4() {
+        const logPart = document.getElementById('log2-atom'); const trigger = document.getElementById('base-match-trigger'); const x = document.getElementById('power-x');
+        logPart.classList.remove('vanish'); trigger.classList.remove('vanish');
+        x.style = "vertical-align: super; font-size: 1.4rem;"; x.innerText = "x"; x.style.color = "var(--c-cargo)";
+    }
+
+    // REGEL 5: Todfeinde
+    function activateMod5() { 
+        document.getElementById('ln-atom').classList.add('vanish');
+        document.getElementById('e-atom').classList.add('vanish');
+        setTimeout(() => { 
+            const x = document.getElementById('ln-x');
+            x.style.transform = "translate(-40px, 30px) scale(2)"; x.style.color = "var(--c-action)"; x.style.verticalAlign = "middle"; 
+        }, 200);
+    }
+    function resetMod5() {
+        document.querySelector('#mod5 .equation-stage').innerHTML = `<span class="atom trigger" id="ln-atom" onclick="activateMod5()">ln</span><span class="atom">(</span><span class="atom base" id="e-atom" style="font-size: 1.8rem;">e</span><span class="atom cargo" id="ln-x" style="vertical-align: super; font-size: 1.4rem;">x</span><span class="atom">)</span>`;
+    }
+
+    // REGEL 6: Log 1
+    function activateMod6() { document.getElementById('stage6').innerHTML = `<span style="font-size:4rem; color:var(--c-action); animation:popIn 0.5s;">0</span>`; }
+    function resetMod6() { document.querySelector('#mod6 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">10</span></span><span class="atom">(</span><span class="atom trigger" id="one-trigger" onclick="activateMod6()">1</span><span class="atom">)</span>`; }
+
+
+    // =================================================================
+    // NEU: LOGIK FÜR REGEL 7 & 8
+    // =================================================================
+    
+    // REGEL 7: DER TURM
+    function activateMod7() {
+        document.getElementById('tower-base').classList.add('vanish');
+        document.getElementById('tower-log').classList.add('vanish');
+        setTimeout(() => {
+            const x = document.getElementById('tower-x');
+            // X fällt runter (wir simulieren das mit translate und scale)
+            x.style.transform = "translate(-30px, 30px) scale(2)";
+            x.style.color = "var(--c-action)";
+            x.innerText = "x";
+        }, 300);
+    }
+    function resetMod7() {
+        document.querySelector('#mod7 .equation-stage').innerHTML = `
+             <div style="display:flex; align-items:flex-start;">
+                <span class="atom base" id="tower-base" style="font-size: 3rem; margin-top: 20px; margin-right:5px;">a</span>
+                <div style="display:flex; align-items:center; margin-bottom: 20px;">
+                    <span class="atom trigger" id="tower-log" onclick="activateMod7()" style="font-size: 1.5rem;">log<sub style="color:var(--c-base)">a</sub></span>
+                    <span class="atom cargo" id="tower-x" style="font-size: 1.5rem; margin-left:2px;">(x)</span>
+                </div>
+            </div>
+        `;
+    }
+
+    // REGEL 8: DIE WURZEL
+    function activateMod8() {
+        document.getElementById('root-stage').innerHTML = `
+             <span class="atom log-box">log</span>
+             <span class="atom">(</span>
+             <span class="atom cargo">x</span>
+             <span class="atom success-text" style="vertical-align: super; font-size: 1.4rem; animation:popIn 0.5s;">1/2</span>
+             <span class="atom">)</span>
+        `;
+        // Wir tricksen: Wir zeigen jetzt an: "Das ist jetzt Regel 1!"
+        // In der echten App würde man hier jetzt Regel 1 aufrufen.
+    }
+    function resetMod8() {
+        document.getElementById('root-stage').innerHTML = `
+            <span class="atom log-box">log</span>
+            <span class="atom">(</span>
+            <span class="atom trigger" id="root-symbol" onclick="activateMod8()" style="font-size: 2.5rem; margin-right:-10px;">√</span>
+            <span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">x</span>
+            <span class="atom">)</span>
+        `;
+    }
+
+
+    // =================================================================
+    // SANDBOX ENGINE (PLATINUM UPGRADE)
+    // =================================================================
+    
+    function setInput(val) {
+        document.getElementById('custom-input').value = val;
+    }
+
+    function clearSandbox() {
+        document.getElementById('custom-input').value = "";
+        document.getElementById('sandbox-stage').innerHTML = `<span style="color:#A0AEC0;">Warte auf Eingabe...</span>`;
+        document.getElementById('sandbox-text').innerText = "Tippe oben eine Aufgabe ein.";
+    }
+
+    function parseInput() {
+        let raw = document.getElementById('custom-input').value;
+        raw = raw.replace(/\s/g, '');
+        raw = raw.replace(/log_[a-z0-9]+/g, 'log');
+        // NEU: Wurzel vereinfachen für Parser
+        raw = raw.replace(/wurzel/g, 'sqrt');
+        
+        if(!raw) return;
+        renderTerm(raw);
+    }
+
+    function renderTerm(expr) {
+        const stage = document.getElementById('sandbox-stage');
+        const info = document.getElementById('sandbox-text');
+        
+        // --- CHECK: DER TURM (a hoch log...) ---
+        if (expr.includes('^(') && expr.includes('log')) {
+            const parts = expr.split('^(');
+            const base = parts[0]; 
+            let exponentContent = parts[1];
+            if(exponentContent.endsWith(')')) exponentContent = exponentContent.slice(0, -1);
+
+            stage.innerHTML = `
+                <div style="display:flex; align-items:flex-start;">
+                    <span class="atom base" style="font-size: 3rem; margin-top: 20px;">${base}</span>
+                    <div style="border: 2px dashed var(--c-danger); padding:10px; border-radius:10px; background:rgba(229,62,62,0.05); margin-left:5px;">
+                        <div style="font-size:0.7rem; color:var(--c-danger); margin-bottom:5px; font-weight:bold;">DACHGESCHOSS (Erst hier aufräumen!)</div>
+                        <div id="exponent-stage" style="display:flex; align-items:center;">
+                            </div>
+                    </div>
+                </div>
+            `;
+            renderExponentInner(exponentContent);
+            info.innerHTML = "<strong>Der Turm!</strong> (Regel 7).<br>Wir müssen erst oben im Dachgeschoss aufräumen.";
+            return;
+        }
+
+        // --- CHECK: DIE WURZEL ---
+        if (expr.includes('sqrt')) {
+            const inside = expr.match(/sqrt\(([^)]+)\)/)[1];
+            stage.innerHTML = `
+                <span class="atom log-box">log</span>
+                <span class="atom">(</span>
+                <span class="atom trigger" onclick="transformSqrt('${inside}')" style="font-size: 2.5rem; margin-right:-5px;">√</span>
+                <span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">${inside}</span>
+                <span class="atom">)</span>
+            `;
+            info.innerHTML = "Eine <strong>Wurzel</strong>! Klick sie weg.";
+            return;
+        }
+
+        // --- CHECK: BRUCH ---
+        if (expr.includes('/')) {
+            const [num, den] = expr.split('/');
+            const numContent = extractLogContent(num) || num.replace('log', '');
+            const denContent = extractLogContent(den) || den.replace('log', '');
+            
+            stage.innerHTML = `
+                <span class="atom log-box">log</span>
+                <div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;">
+                    <span class="atom cargo">${numContent}</span>
+                    <span class="atom trigger" onclick="transformDivide('${numContent}', '${denContent}')" style="width: 100%; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span>
+                    <span class="atom cargo">${denContent}</span>
+                </div>
+            `;
+            info.innerHTML = "Ein <strong>Bruch</strong>! Klick auf den Strich.";
+            return;
+        }
+
+        // --- CHECK: SUMME ---
+        if (expr.includes('+')) {
+            const parts = expr.split('+');
+            stage.innerHTML = `
+                <span class="atom">${parts[0]}</span>
+                <span class="atom trigger" onclick="transformSumToProduct()" style="font-size:2rem; color:var(--c-danger); margin:0 10px; cursor:pointer;">+</span>
+                <span class="atom">${parts[1]}</span>
+            `;
+            info.innerHTML = "Eine <strong>Summe</strong>? Klick auf das Plus.";
+            return;
+        }
+        
+        // --- CHECK: RUCKSACK (Mal vor dem Log) ---
+        if (expr.includes('*log')) {
+            const parts = expr.split('*log');
+            const factor = parts[0];
+            const content = extractLogContent(expr) || "x";
+            
+            stage.innerHTML = `
+                <span class="atom trigger" onclick="transformRucksack('${factor}', '${content}')" style="font-size: 1.5rem; color:var(--c-danger); margin-right:5px; vertical-align:middle; cursor:pointer;">${factor} •</span>
+                <span class="atom log-box">log</span>(<span class="atom cargo">${content}</span>)
+            `;
+            info.innerHTML = "Ein <strong>Rucksack</strong> vor der Tür! Klick auf die Zahl.";
+            return;
+        }
+
+        // --- CHECK: POTENZ ---
+        if (expr.includes('^')) {
+            const insideLog = extractLogContent(expr);
+            if(insideLog && insideLog.includes('^')) {
+                const parts = insideLog.split('^');
+                stage.innerHTML = `
+                    <span class="atom log-box">log</span>(
+                    <span class="atom cargo">${parts[0]}</span>
+                    <span class="atom trigger" id="sand-exp" onclick="transformPower('${parts[0]}', '${parts[1]}')" style="vertical-align: super; font-size: 1.2rem;">${parts[1]}</span>
+                    )
+                `;
+                info.innerHTML = "Rucksack innen! Klick ihn an.";
+                return;
+            }
+        }
+
+        // --- CHECK: MAL ---
+        if (expr.includes('*')) {
+            const insideLog = extractLogContent(expr);
+            if(insideLog && insideLog.includes('*')) {
+                const [a,b] = insideLog.split('*');
+                stage.innerHTML = `
+                    <span class="atom log-box">log</span>(
+                    <span class="atom cargo">${a}</span>
+                    <span class="atom trigger" onclick="transformMultiply('${a}','${b}')" style="margin:0 5px;">•</span>
+                    <span class="atom cargo">${b}</span>
+                    )
+                `;
+                info.innerHTML = "Mal-Rechnung innen! Klick den Punkt.";
+                return;
+            }
+        }
+
+        // FALLBACK
+        stage.innerHTML = `<span style="font-family:monospace; font-size:1.5rem;">${expr}</span>`;
+        info.innerHTML = "Keine Regel erkannt. Versuch z.B. <code>log(sqrt(x))</code>";
+    }
+
+    function renderExponentInner(innerExpr) {
+        const container = document.getElementById('exponent-stage');
+        if(innerExpr.includes('+')) {
+            const parts = innerExpr.split('+');
+            container.innerHTML = `
+                <span class="atom" style="font-size:1.2rem;">${parts[0]}</span>
+                <span class="atom trigger" style="font-size:1.5rem; margin:0 5px;">+</span>
+                <span class="atom" style="font-size:1.2rem;">${parts[1]}</span>
+            `;
+            container.onclick = function() {
+                container.innerHTML = `<span class="atom log-box">log</span>(<span class="atom cargo">x² • y³</span>)`;
+                document.getElementById('sandbox-text').innerHTML = "<strong>Zack!</strong> Ergebnis: $x^2 y^3$";
+            }
+        } else {
+            container.innerText = innerExpr;
+        }
+    }
+
+    function extractLogContent(str) {
+        const match = str.match(/log\(([^)]+)\)/);
+        return match ? match[1] : null;
+    }
+
+    // --- TRANSFORMATIONS ---
+    function transformRucksack(factor, content) {
+        const stage = document.getElementById('sandbox-stage');
+        stage.innerHTML = `<span class="atom log-box">log</span>(<span class="atom cargo">${content}</span><span class="atom success-text" style="vertical-align:super; font-size:1.2rem; animation:popIn 0.5s;">${factor}</span>)`;
+        document.getElementById('sandbox-text').innerHTML = "Rucksack verstaut!";
+    }
+    function transformDivide(num, den) {
+        const stage = document.getElementById('sandbox-stage');
+        stage.innerHTML = `<span class="atom log-box">log</span>(${num}) <span class="atom success-text" style="font-size:2rem; animation:popIn 0.5s;">-</span> <span class="atom log-box">log</span>(${den})`;
+        document.getElementById('sandbox-text').innerHTML = "Bruch zerlegt!";
+    }
+    function transformSumToProduct() {
+        const stage = document.getElementById('sandbox-stage');
+        stage.innerHTML = `<span class="atom log-box">log</span>(<span class="atom cargo">A • B</span>)`;
+        document.getElementById('sandbox-text').innerHTML = "Zusammengefasst!";
+    }
+    function transformMultiply(a, b) {
+        const stage = document.getElementById('sandbox-stage');
+        stage.innerHTML = `<span class="atom log-box">log</span>(${a}) <span class="atom success-text" style="font-size:2rem; animation:popIn 0.5s;">+</span> <span class="atom log-box">log</span>(${b})`;
+        document.getElementById('sandbox-text').innerHTML = "Produkt getrennt!";
+    }
+    function transformPower(base, exp) {
+        const stage = document.getElementById('sandbox-stage');
+        stage.innerHTML = `<span class="atom success-text" style="font-size: 2rem; margin-right: 10px; animation:popIn 0.5s;">${exp} •</span><span class="atom log-box">log</span>(<span class="atom cargo">${base}</span>)`;
+        document.getElementById('sandbox-text').innerHTML = "Rucksack runter!";
+    }
+    function transformSqrt(content) {
+        const stage = document.getElementById('sandbox-stage');
+        stage.innerHTML = `<span class="atom log-box">log</span>(<span class="atom cargo">${content}</span><span class="atom success-text" style="vertical-align:super; font-size:1.2rem; animation:popIn 0.5s;">1/2</span>)`;
+        document.getElementById('sandbox-text').innerHTML = "Wurzel ist weg! Jetzt ist es ein 1/2 Rucksack.";
+    }
+
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = `
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
+    `;
+    document.head.appendChild(styleSheet);
+
+</script>
+</body>
+</html>
