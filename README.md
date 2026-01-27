@@ -99,5 +99,3 @@ Merk dir: **Wurzel ist Rucksack.**
 * (\sqrt[4]{x} \rightarrow) Tippe `x^(1/4)`
 
 Viel Erfolg beim Klicken!
-
-Wenn du willst, sag mir kurz: Hast du die README direkt in GitHub im Browser eingefügt oder lokal in VS Code? Dann kann ich dir den typischen „verschluckt nach Tabelle“-Fehler konkret erklären (z. B. fehlende Leerzeile vor/ nach Codeblock).
