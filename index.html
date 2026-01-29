@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log-Breaker: PLATINUM EDITION (Fixed) 💎</title>
+    <title>Log-Breaker: PLATINUM EDITION (Final Fix) 💎</title>
     <style>
         /* --- DESIGN SYSTEM --- */
         :root {
@@ -70,7 +70,6 @@
             position: relative;
             overflow: hidden;
             user-select: none;
-            /* MOBILE FIX: Wrap erlauben, falls es eng wird */
             flex-wrap: wrap;
             align-content: center;
         }
@@ -92,12 +91,10 @@
             cursor: pointer;
             border: 2px dashed var(--c-danger);
             border-radius: 8px;
-            /* APPLE TOUCH TARGET FIX: Größeres Padding für Finger */
             padding: 5px 10px; 
             margin: 0 2px;
             background: rgba(229, 62, 62, 0.05);
             animation: pulse 2.5s infinite;
-            /* Verhindert Zoom beim Doppeltippen auf Mobile */
             touch-action: manipulation; 
         }
         
@@ -117,7 +114,7 @@
             background: transparent;
             border: 1px solid #CBD5E0;
             color: #718096;
-            padding: 8px 16px; /* Größer für Mobile */
+            padding: 8px 16px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.7rem;
@@ -136,11 +133,9 @@
         
         strong { color: var(--c-base); }
 
-        /* Helpers */
         .vanish { opacity: 0 !important; transform: scale(0) !important; filter: blur(10px); }
         .success-text { color: var(--c-action) !important; border-color: transparent !important; background: transparent !important; }
 
-        /* SANDBOX STYLES */
         #sandbox {
             border-left: 10px solid #805AD5; 
             border: 2px solid #805AD5;
@@ -160,15 +155,15 @@
             gap: 10px;
             margin-bottom: 20px;
             width: 100%;
-            flex-direction: column; /* Mobile first: untereinander */
+            flex-direction: column;
         }
         @media(min-width: 500px) {
-            .input-group { flex-direction: row; } /* Desktop: nebeneinander */
+            .input-group { flex-direction: row; }
         }
 
         input#custom-input {
             width: 100%;
-            padding: 15px; /* Dicker für Finger */
+            padding: 15px;
             font-size: 1.1rem;
             font-family: 'Courier New', monospace;
             border: 2px solid #E2E8F0;
@@ -213,155 +208,56 @@
     <p class="sub">Jetzt mit allen Regeln und Mobile-Support.</p>
 
     <div class="module" id="mod1">
-        <div class="module-header">
-            <span>REGEL 1: Der Rucksack (Potenzgesetz)</span>
-            <button class="reset-btn" onclick="resetMod1()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <span class="atom log-box">log<span class="base">a</span></span>
-            <span class="atom">(</span>
-            <span class="atom cargo">x</span>
-            <span class="atom trigger" id="trigger1" onclick="activateMod1()" style="vertical-align: super; font-size: 1.4rem; margin-left:-5px;">2</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Im Logarithmus steht eine Hochzahl ($x^2$).<br>
-            <strong>Aktion:</strong> Klicke die rote 2. Sie springt nach vorne. Aus "Hoch 2" wird "Mal 2".
-        </div>
+        <div class="module-header"><span>REGEL 1: Der Rucksack (Potenz)</span><button class="reset-btn" onclick="resetMod1()">Nochmal</button></div>
+        <div class="equation-stage"><span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom trigger" id="trigger1" onclick="activateMod1()" style="vertical-align: super; font-size: 1.4rem; margin-left:-5px;">2</span><span class="atom">)</span></div>
+        <div class="explanation"><strong>Situation:</strong> Hochzahl im Log.<br><strong>Aktion:</strong> Klicke die 2. Sie springt nach vorne.</div>
     </div>
 
     <div class="module" id="mod2">
-        <div class="module-header">
-            <span>REGEL 2: Platzmangel (Produktregel)</span>
-            <button class="reset-btn" onclick="resetMod2()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <span class="atom log-box">log<span class="base">a</span></span>
-            <span class="atom">(</span>
-            <span class="atom cargo">x</span>
-            <span class="atom trigger" id="trigger2" onclick="activateMod2()" style="margin: 0 5px;">•</span>
-            <span class="atom cargo">y</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Im Logarithmus wird multipliziert ($x \cdot y$).<br>
-            <strong>Aktion:</strong> Klicke den Punkt. Der Logarithmus platzt auseinander. Aus "Mal" wird "Plus".
-        </div>
+        <div class="module-header"><span>REGEL 2: Platzmangel (Mal)</span><button class="reset-btn" onclick="resetMod2()">Nochmal</button></div>
+        <div class="equation-stage"><span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom trigger" id="trigger2" onclick="activateMod2()" style="margin: 0 5px;">•</span><span class="atom cargo">y</span><span class="atom">)</span></div>
+        <div class="explanation"><strong>Situation:</strong> Multiplikation.<br><strong>Aktion:</strong> Klick den Punkt. Es wird "Plus".</div>
     </div>
 
     <div class="module" id="mod3">
-        <div class="module-header">
-            <span>REGEL 3: Der Keller (Quotientenregel)</span>
-            <button class="reset-btn" onclick="resetMod3()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <span class="atom log-box">log<span class="base">a</span></span>
-            <div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;">
-                <span class="atom cargo">x</span>
-                <span class="atom trigger" id="trigger3" onclick="activateMod3()" style="width: 40px; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span>
-                <span class="atom cargo" id="y-val">y</span>
-            </div>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Ein Bruch ($x$ geteilt durch $y$).<br>
-            <strong>Aktion:</strong> Klicke den Bruchstrich. Das $y$ kommt hoch, muss aber ein "Minus" akzeptieren.
-        </div>
+        <div class="module-header"><span>REGEL 3: Der Keller (Bruch)</span><button class="reset-btn" onclick="resetMod3()">Nochmal</button></div>
+        <div class="equation-stage"><span class="atom log-box">log<span class="base">a</span></span><div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;"><span class="atom cargo">x</span><span class="atom trigger" id="trigger3" onclick="activateMod3()" style="width: 40px; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span><span class="atom cargo" id="y-val">y</span></div></div>
+        <div class="explanation"><strong>Situation:</strong> Bruch.<br><strong>Aktion:</strong> Klick den Strich. Es wird "Minus".</div>
     </div>
 
     <div class="module" id="mod4" style="border-left-color: var(--c-base);">
-        <div class="module-header">
-            <span>REGEL 4: Die Zwillinge (Basis Match)</span>
-            <button class="reset-btn" onclick="resetMod4()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <span class="atom log-box" id="log2-atom">log<span class="base">2</span></span>
-            <span class="atom">(</span>
-            <span class="atom trigger" id="base-match-trigger" onclick="activateMod4()" style="font-weight:bold; color:var(--c-base);">2</span>
-            <span class="atom cargo" id="power-x" style="vertical-align: super; font-size: 1.4rem;">x</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Basis (2) und Zahl (2) sind gleich.<br>
-            <strong>Aktion:</strong> Klicke die rote 2. Sie fressen sich auf. Nur $x$ bleibt.
-        </div>
+        <div class="module-header"><span>REGEL 4: Zwillinge</span><button class="reset-btn" onclick="resetMod4()">Nochmal</button></div>
+        <div class="equation-stage"><span class="atom log-box" id="log2-atom">log<span class="base">2</span></span><span class="atom">(</span><span class="atom trigger" id="base-match-trigger" onclick="activateMod4()" style="font-weight:bold; color:var(--c-base);">2</span><span class="atom cargo" id="power-x" style="vertical-align: super; font-size: 1.4rem;">x</span><span class="atom">)</span></div>
+        <div class="explanation">Basis unten und Zahl oben gleich. Löschen sich aus.</div>
     </div>
 
     <div class="module" id="mod5" style="border-left-color: #2D3748;">
-        <div class="module-header">
-            <span>REGEL 5: Todfeinde (ln und e)</span>
-            <button class="reset-btn" onclick="resetMod5()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <span class="atom trigger" id="ln-atom" onclick="activateMod5()">ln</span>
-            <span class="atom">(</span>
-            <span class="atom base" id="e-atom" style="font-size: 1.8rem;">e</span>
-            <span class="atom cargo" id="ln-x" style="vertical-align: super; font-size: 1.4rem;">x</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> $ln$ trifft auf $e$.<br>
-            <strong>Aktion:</strong> Klicke "ln". Sie vernichten sich. Nur $x$ bleibt.
-        </div>
+        <div class="module-header"><span>REGEL 5: Todfeinde</span><button class="reset-btn" onclick="resetMod5()">Nochmal</button></div>
+        <div class="equation-stage"><span class="atom trigger" id="ln-atom" onclick="activateMod5()">ln</span><span class="atom">(</span><span class="atom base" id="e-atom" style="font-size: 1.8rem;">e</span><span class="atom cargo" id="ln-x" style="vertical-align: super; font-size: 1.4rem;">x</span><span class="atom">)</span></div>
+        <div class="explanation">ln trifft auf e. Löschen sich aus.</div>
     </div>
 
     <div class="module" id="mod6" style="border-left-color: var(--c-action);">
-        <div class="module-header">
-            <span>REGEL 6: Log von 1</span>
-            <button class="reset-btn" onclick="resetMod6()">Nochmal</button>
-        </div>
-        <div class="equation-stage" id="stage6">
-            <span class="atom log-box">log<span class="base">10</span></span>
-            <span class="atom">(</span>
-            <span class="atom trigger" id="one-trigger" onclick="activateMod6()">1</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Logarithmus von 1.<br>
-            <strong>Aktion:</strong> Klicke die 1. Ergebnis ist immer 0.
-        </div>
+        <div class="module-header"><span>REGEL 6: Log von 1</span><button class="reset-btn" onclick="resetMod6()">Nochmal</button></div>
+        <div class="equation-stage" id="stage6"><span class="atom log-box">log<span class="base">10</span></span><span class="atom">(</span><span class="atom trigger" id="one-trigger" onclick="activateMod6()">1</span><span class="atom">)</span></div>
+        <div class="explanation">Log von 1 ist immer 0.</div>
     </div>
 
     <div class="module" id="mod7" style="border-left-color: #000;">
-        <div class="module-header">
-            <span>NEU: REGEL 7: Der Turm (Inverse Eigenschaft)</span>
-            <button class="reset-btn" onclick="resetMod7()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <div style="display:flex; align-items:flex-start;">
-                <span class="atom base" id="tower-base" style="font-size: 3rem; margin-top: 20px; margin-right:5px;">a</span>
-                <div style="display:flex; align-items:center; margin-bottom: 20px;">
-                    <span class="atom trigger" id="tower-log" onclick="activateMod7()" style="font-size: 1.5rem;">log<sub style="color:var(--c-base)">a</sub></span>
-                    <span class="atom cargo" id="tower-x" style="font-size: 1.5rem; margin-left:2px;">(x)</span>
-                </div>
-            </div>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Die Basis unten ($a$) und die Basis im Logarithmus oben ($log_a$) sind gleich.<br>
-            <strong>Aktion:</strong> Klicke auf "log". Basis und Logarithmus löschen sich aus. Das $x$ fällt runter auf den Boden.
-        </div>
+        <div class="module-header"><span>REGEL 7: Der Turm</span><button class="reset-btn" onclick="resetMod7()">Nochmal</button></div>
+        <div class="equation-stage"><div style="display:flex; align-items:flex-start;"><span class="atom base" id="tower-base" style="font-size: 3rem; margin-top: 20px; margin-right:5px;">a</span><div style="display:flex; align-items:center; margin-bottom: 20px;"><span class="atom trigger" id="tower-log" onclick="activateMod7()" style="font-size: 1.5rem;">log<sub style="color:var(--c-base)">a</sub></span><span class="atom cargo" id="tower-x" style="font-size: 1.5rem; margin-left:2px;">(x)</span></div></div></div>
+        <div class="explanation">Klick auf log. Basis frisst log.</div>
     </div>
 
     <div class="module" id="mod8" style="border-left-color: #805AD5;">
-        <div class="module-header">
-            <span>NEU: REGEL 8: Die Wurzel (Tarnkappe)</span>
-            <button class="reset-btn" onclick="resetMod8()">Nochmal</button>
-        </div>
-        <div class="equation-stage" id="root-stage">
-            <span class="atom log-box">log</span>
-            <span class="atom">(</span>
-            <span class="atom trigger" id="root-symbol" onclick="activateMod8()" style="font-size: 2.5rem; margin-right:-10px;">√</span>
-            <span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">x</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Eine Wurzel $\sqrt{x}$. Das sieht böse aus.<br>
-            <strong>Aktion:</strong> Klicke die Wurzel. Sie verwandelt sich in den Exponenten $\frac{1}{2}$ (Rucksack). Danach gilt Regel 1!
-        </div>
+        <div class="module-header"><span>REGEL 8: Die Wurzel</span><button class="reset-btn" onclick="resetMod8()">Nochmal</button></div>
+        <div class="equation-stage" id="root-stage"><span class="atom log-box">log</span><span class="atom">(</span><span class="atom trigger" id="root-symbol" onclick="activateMod8()" style="font-size: 2.5rem; margin-right:-10px;">√</span><span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">x</span><span class="atom">)</span></div>
+        <div class="explanation">Klicke die Wurzel. Sie wird zum Rucksack 1/2.</div>
     </div>
 
     <div class="module" id="sandbox">
         <div class="module-header">
-            <span>🧪 DEINE SANDBOX (JETZT NOCH SCHLAUER)</span>
+            <span>🧪 DEINE SANDBOX (REPARIERT)</span>
             <button class="reset-btn" onclick="clearSandbox()">Leeren</button>
         </div>
         
@@ -381,87 +277,32 @@
         </div>
         
         <div class="explanation" id="sandbox-text">
-            Tippe oben eine Aufgabe ein. Jetzt auch mit <code>sqrt(x)</code> und Türmen.
+            Tippe oben eine Aufgabe ein.
         </div>
     </div>
 
 
 <script>
-    // --- MODULE LOGIK ---
-
-    function activateMod1() {
-        const t = document.getElementById('trigger1');
-        t.style.transform = "translate(-180px, 0px)"; t.style.color = "var(--c-action)"; t.style.borderColor = "transparent"; t.style.background = "transparent"; t.style.zIndex = "100";
-        setTimeout(() => { document.querySelector('#mod1 .equation-stage').innerHTML = `<span class="atom success-text" style="font-size: 2.2rem; margin-right: 10px;">2 •</span><span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom">)</span>`; }, 300);
-    }
-    function resetMod1() {
-        document.querySelector('#mod1 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom trigger" id="trigger1" onclick="activateMod1()" style="vertical-align: super; font-size: 1.4rem; margin-left:-5px;">2</span><span class="atom">)</span>`;
-    }
-
-    function activateMod2() {
-        document.querySelector('#mod2 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom cargo">(x)</span><span class="atom success-text" style="font-size:3rem; margin:0 15px; animation:popIn 0.5s;">+</span><span class="atom log-box" style="animation:popIn 0.5s;">log<span class="base">a</span></span><span class="atom cargo">(y)</span>`;
-    }
-    function resetMod2() {
-        document.querySelector('#mod2 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom trigger" id="trigger2" onclick="activateMod2()" style="margin: 0 5px;">•</span><span class="atom cargo">y</span><span class="atom">)</span>`;
-    }
-
-    function activateMod3() {
-        document.querySelector('#mod3 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom cargo">(x)</span><span class="atom success-text" style="font-size:3rem; margin:0 15px; animation:popIn 0.5s;">-</span><span class="atom log-box" style="animation:popIn 0.5s;">log<span class="base">a</span></span><span class="atom cargo">(y)</span>`;
-    }
-    function resetMod3() {
-        document.querySelector('#mod3 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;"><span class="atom cargo">x</span><span class="atom trigger" id="trigger3" onclick="activateMod3()" style="width: 40px; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span><span class="atom cargo" id="y-val">y</span></div>`;
-    }
-
-    function activateMod4() {
-        const logPart = document.getElementById('log2-atom');
-        const trigger = document.getElementById('base-match-trigger');
-        const x = document.getElementById('power-x');
-        logPart.classList.add('vanish'); trigger.classList.add('vanish');
-        setTimeout(() => { x.style.transform = "translate(-60px, 30px) scale(2)"; x.style.color = "var(--c-action)"; x.style.verticalAlign = "middle"; x.innerText = "x"; }, 200);
-    }
-    function resetMod4() {
-        const logPart = document.getElementById('log2-atom'); const trigger = document.getElementById('base-match-trigger'); const x = document.getElementById('power-x');
-        logPart.classList.remove('vanish'); trigger.classList.remove('vanish');
-        x.style = "vertical-align: super; font-size: 1.4rem;"; x.innerText = "x"; x.style.color = "var(--c-cargo)";
-    }
-
-    function activateMod5() { 
-        document.getElementById('ln-atom').classList.add('vanish');
-        document.getElementById('e-atom').classList.add('vanish');
-        setTimeout(() => { 
-            const x = document.getElementById('ln-x');
-            x.style.transform = "translate(-40px, 30px) scale(2)"; x.style.color = "var(--c-action)"; x.style.verticalAlign = "middle"; 
-        }, 200);
-    }
-    function resetMod5() {
-        document.querySelector('#mod5 .equation-stage').innerHTML = `<span class="atom trigger" id="ln-atom" onclick="activateMod5()">ln</span><span class="atom">(</span><span class="atom base" id="e-atom" style="font-size: 1.8rem;">e</span><span class="atom cargo" id="ln-x" style="vertical-align: super; font-size: 1.4rem;">x</span><span class="atom">)</span>`;
-    }
-
+    // --- MODULE 1-8 LOGIK ---
+    function activateMod1() { const t = document.getElementById('trigger1'); t.style.transform = "translate(-180px, 0px)"; t.style.color = "var(--c-action)"; t.style.borderColor = "transparent"; t.style.background = "transparent"; t.style.zIndex = "100"; setTimeout(() => { document.querySelector('#mod1 .equation-stage').innerHTML = `<span class="atom success-text" style="font-size: 2.2rem; margin-right: 10px;">2 •</span><span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom">)</span>`; }, 300); }
+    function resetMod1() { document.querySelector('#mod1 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom trigger" id="trigger1" onclick="activateMod1()" style="vertical-align: super; font-size: 1.4rem; margin-left:-5px;">2</span><span class="atom">)</span>`; }
+    function activateMod2() { document.querySelector('#mod2 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom cargo">(x)</span><span class="atom success-text" style="font-size:3rem; margin:0 15px; animation:popIn 0.5s;">+</span><span class="atom log-box" style="animation:popIn 0.5s;">log<span class="base">a</span></span><span class="atom cargo">(y)</span>`; }
+    function resetMod2() { document.querySelector('#mod2 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom trigger" id="trigger2" onclick="activateMod2()" style="margin: 0 5px;">•</span><span class="atom cargo">y</span><span class="atom">)</span>`; }
+    function activateMod3() { document.querySelector('#mod3 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom cargo">(x)</span><span class="atom success-text" style="font-size:3rem; margin:0 15px; animation:popIn 0.5s;">-</span><span class="atom log-box" style="animation:popIn 0.5s;">log<span class="base">a</span></span><span class="atom cargo">(y)</span>`; }
+    function resetMod3() { document.querySelector('#mod3 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;"><span class="atom cargo">x</span><span class="atom trigger" id="trigger3" onclick="activateMod3()" style="width: 40px; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span><span class="atom cargo" id="y-val">y</span></div>`; }
+    function activateMod4() { const logPart = document.getElementById('log2-atom'); const trigger = document.getElementById('base-match-trigger'); const x = document.getElementById('power-x'); logPart.classList.add('vanish'); trigger.classList.add('vanish'); setTimeout(() => { x.style.transform = "translate(-60px, 30px) scale(2)"; x.style.color = "var(--c-action)"; x.style.verticalAlign = "middle"; x.innerText = "x"; }, 200); }
+    function resetMod4() { const logPart = document.getElementById('log2-atom'); const trigger = document.getElementById('base-match-trigger'); const x = document.getElementById('power-x'); logPart.classList.remove('vanish'); trigger.classList.remove('vanish'); x.style = "vertical-align: super; font-size: 1.4rem;"; x.innerText = "x"; x.style.color = "var(--c-cargo)"; }
+    function activateMod5() { document.getElementById('ln-atom').classList.add('vanish'); document.getElementById('e-atom').classList.add('vanish'); setTimeout(() => { const x = document.getElementById('ln-x'); x.style.transform = "translate(-40px, 30px) scale(2)"; x.style.color = "var(--c-action)"; x.style.verticalAlign = "middle"; }, 200); }
+    function resetMod5() { document.querySelector('#mod5 .equation-stage').innerHTML = `<span class="atom trigger" id="ln-atom" onclick="activateMod5()">ln</span><span class="atom">(</span><span class="atom base" id="e-atom" style="font-size: 1.8rem;">e</span><span class="atom cargo" id="ln-x" style="vertical-align: super; font-size: 1.4rem;">x</span><span class="atom">)</span>`; }
     function activateMod6() { document.getElementById('stage6').innerHTML = `<span style="font-size:4rem; color:var(--c-action); animation:popIn 0.5s;">0</span>`; }
     function resetMod6() { document.querySelector('#mod6 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">10</span></span><span class="atom">(</span><span class="atom trigger" id="one-trigger" onclick="activateMod6()">1</span><span class="atom">)</span>`; }
-
-    function activateMod7() {
-        document.getElementById('tower-base').classList.add('vanish');
-        document.getElementById('tower-log').classList.add('vanish');
-        setTimeout(() => {
-            const x = document.getElementById('tower-x');
-            x.style.transform = "translate(-30px, 30px) scale(2)"; x.style.color = "var(--c-action)"; x.innerText = "x";
-        }, 300);
-    }
-    function resetMod7() {
-        document.querySelector('#mod7 .equation-stage').innerHTML = `<div style="display:flex; align-items:flex-start;"><span class="atom base" id="tower-base" style="font-size: 3rem; margin-top: 20px; margin-right:5px;">a</span><div style="display:flex; align-items:center; margin-bottom: 20px;"><span class="atom trigger" id="tower-log" onclick="activateMod7()" style="font-size: 1.5rem;">log<sub style="color:var(--c-base)">a</sub></span><span class="atom cargo" id="tower-x" style="font-size: 1.5rem; margin-left:2px;">(x)</span></div></div>`;
-    }
-
-    function activateMod8() {
-        document.getElementById('root-stage').innerHTML = `<span class="atom log-box">log</span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom success-text" style="vertical-align: super; font-size: 1.4rem; animation:popIn 0.5s;">1/2</span><span class="atom">)</span>`;
-    }
-    function resetMod8() {
-        document.getElementById('root-stage').innerHTML = `<span class="atom log-box">log</span><span class="atom">(</span><span class="atom trigger" id="root-symbol" onclick="activateMod8()" style="font-size: 2.5rem; margin-right:-10px;">√</span><span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">x</span><span class="atom">)</span>`;
-    }
-
+    function activateMod7() { document.getElementById('tower-base').classList.add('vanish'); document.getElementById('tower-log').classList.add('vanish'); setTimeout(() => { const x = document.getElementById('tower-x'); x.style.transform = "translate(-30px, 30px) scale(2)"; x.style.color = "var(--c-action)"; x.innerText = "x"; }, 300); }
+    function resetMod7() { document.querySelector('#mod7 .equation-stage').innerHTML = `<div style="display:flex; align-items:flex-start;"><span class="atom base" id="tower-base" style="font-size: 3rem; margin-top: 20px; margin-right:5px;">a</span><div style="display:flex; align-items:center; margin-bottom: 20px;"><span class="atom trigger" id="tower-log" onclick="activateMod7()" style="font-size: 1.5rem;">log<sub style="color:var(--c-base)">a</sub></span><span class="atom cargo" id="tower-x" style="font-size: 1.5rem; margin-left:2px;">(x)</span></div></div>`; }
+    function activateMod8() { document.getElementById('root-stage').innerHTML = `<span class="atom log-box">log</span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom success-text" style="vertical-align: super; font-size: 1.4rem; animation:popIn 0.5s;">1/2</span><span class="atom">)</span>`; }
+    function resetMod8() { document.getElementById('root-stage').innerHTML = `<span class="atom log-box">log</span><span class="atom">(</span><span class="atom trigger" id="root-symbol" onclick="activateMod8()" style="font-size: 2.5rem; margin-right:-10px;">√</span><span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">x</span><span class="atom">)</span>`; }
 
     // =================================================================
-    // SANDBOX ENGINE V3 (REPAIRED)
+    // SANDBOX ENGINE V4 - FINAL FIXED VERSION
     // =================================================================
     
     function setInput(val) {
@@ -496,15 +337,7 @@
             let exponent = expr.substring(powIndex + 1);
             if(exponent.startsWith('(') && exponent.endsWith(')')) { exponent = exponent.slice(1, -1); }
 
-            stage.innerHTML = `
-                <div style="display:flex; align-items:flex-start;">
-                    <span class="atom base" style="font-size: 3rem; margin-top: 20px;">${base}</span>
-                    <div style="border: 2px dashed var(--c-danger); padding:10px; border-radius:10px; background:rgba(229,62,62,0.05); margin-left:5px;">
-                        <div style="font-size:0.7rem; color:var(--c-danger); margin-bottom:5px; font-weight:bold;">DACHGESCHOSS</div>
-                        <span class="atom trigger" onclick="solveTower('${exponent}')" style="font-size: 1.2rem;">${exponent}</span>
-                    </div>
-                </div>
-            `;
+            stage.innerHTML = `<div style="display:flex; align-items:flex-start;"><span class="atom base" style="font-size: 3rem; margin-top: 20px;">${base}</span><div style="border: 2px dashed var(--c-danger); padding:10px; border-radius:10px; background:rgba(229,62,62,0.05); margin-left:5px;"><div style="font-size:0.7rem; color:var(--c-danger); margin-bottom:5px; font-weight:bold;">DACHGESCHOSS</div><span class="atom trigger" onclick="solveTower('${exponent}')" style="font-size: 1.2rem;">${exponent}</span></div></div>`;
             info.innerHTML = "<strong>Der Turm!</strong> (Regel 7). Klicke auf das Dachgeschoss.";
             return;
         }
@@ -536,14 +369,8 @@
         if (expr.startsWith('log') || expr.startsWith('ln')) {
             const inner = extractInner(expr);
             
-            // WURZEL?
-            if (inner.includes('sqrt')) {
-                const content = getInnerContent(inner, 'sqrt');
-                stage.innerHTML = `<span class="atom log-box">log</span>(<span class="atom trigger" onclick="transformSqrt('${content}')" style="font-size: 2.5rem; margin-right:-5px;">√</span><span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">${content}</span>)`;
-                info.innerHTML = "Wurzel entdeckt! Wegklicken.";
-                return;
-            }
-
+            // HIER WAR DER FEHLER: Wir müssen ZUERST nach Bruch/Mal suchen, DANN erst nach Wurzel
+            
             // BRUCH?
             const divIndex = findSplitIndex(inner, '/');
             if (divIndex !== -1) {
@@ -575,20 +402,28 @@
                 info.innerHTML = "Exponent im Log! Rucksack werfen.";
                 return;
             }
+
+            // WURZEL? (JETZT ERST CHECKEN, nachdem Bruch/Produkt ausgeschlossen sind!)
+            if (inner.includes('sqrt')) {
+                // Nur wenn es wirklich mit sqrt anfängt
+                if (inner.startsWith('sqrt')) {
+                    const content = getInnerContent(inner, 'sqrt');
+                    stage.innerHTML = `<span class="atom log-box">log</span>(<span class="atom trigger" onclick="transformSqrt('${content}')" style="font-size: 2.5rem; margin-right:-5px;">√</span><span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">${content}</span>)`;
+                    info.innerHTML = "Wurzel entdeckt! Wegklicken.";
+                    return;
+                }
+            }
         }
 
         stage.innerHTML = `<span style="font-family:monospace; font-size:1.5rem;">${expr}</span>`;
-        info.innerHTML = "Keine Regel anwenden. Versuch, Klammern zu setzen!";
+        info.innerHTML = "Keine Regel anwenden. Versuch, Klammern zu setzen! (z.B. <code>log((a*b)/c)</code>)";
     }
 
     // --- HELPER ---
     function findSplitIndex(str, char) {
         let depth = 0;
         // Speziell für log/ln: Wenn wir IM log sind, ignorieren wir den Wrapper
-        let startIdx = 0;
-        if ((str.startsWith('log(') || str.startsWith('ln(')) && str.endsWith(')')) {
-             return -1; // Wir wollen nicht im Log splitten wenn wir außen sind
-        }
+        if ((str.startsWith('log(') || str.startsWith('ln(')) && str.endsWith(')')) return -1;
 
         for (let i = 0; i < str.length; i++) {
             if (str[i] === '(') depth++;
@@ -600,13 +435,12 @@
 
     function stripOuterBrackets(str) {
         if(str.startsWith('(') && str.endsWith(')')) {
-            // Check if valid pair
             let depth = 0;
             let valid = true;
             for(let i=0; i<str.length-1; i++) {
                 if(str[i] === '(') depth++;
                 if(str[i] === ')') depth--;
-                if(depth === 0) valid = false; // Klammer ging zu früh zu
+                if(depth === 0) valid = false;
             }
             if(valid) return str.slice(1,-1);
         }
