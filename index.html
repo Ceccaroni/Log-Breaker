@@ -1,394 +1,7 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log-Breaker: PLATINUM EDITION (Fixed) 💎</title>
-    <style>
-        /* --- DESIGN SYSTEM --- */
-        :root {
-            --c-base: #0055AA;      /* BLAU */
-            --c-container: #718096; /* GRAU */
-            --c-cargo: #ED8936;     /* ORANGE */
-            --c-danger: #E53E3E;    /* ROT */
-            --c-action: #48BB78;    /* GRÜN */
-            --bg: #F7FAFC;
-        }
-
-        body {
-            font-family: 'Verdana', sans-serif;
-            background: var(--bg);
-            color: #2D3748;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        h1 { text-align: center; margin-bottom: 5px; color: #2D3748; }
-        p.sub { text-align: center; color: #718096; max-width: 600px; margin-bottom: 40px; line-height: 1.5; }
-
-        .module {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            width: 100%;
-            max-width: 700px;
-            margin-bottom: 30px;
-            padding: 25px;
-            position: relative;
-            border-left: 10px solid var(--c-container);
-            transition: transform 0.2s;
-        }
-        
-        .module:hover { transform: translateY(-2px); }
-
-        .module-header {
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #A0AEC0;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-        }
-
-        .equation-stage {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2rem; 
-            font-weight: bold;
-            font-family: 'Courier New', monospace; 
-            height: 140px;
-            background: #EDF2F7;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            position: relative;
-            overflow: hidden;
-            user-select: none;
-            /* MOBILE FIX: Wrap erlauben, falls es eng wird */
-            flex-wrap: wrap;
-            align-content: center;
-        }
-
-        .atom {
-            display: inline-block;
-            padding: 2px 5px;
-            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-            z-index: 1;
-        }
-
-        .log-box { color: var(--c-container); }
-        .base { font-size: 1rem; color: var(--c-base); vertical-align: sub; font-weight: bold;}
-        .cargo { color: var(--c-cargo); }
-        
-        .trigger {
-            color: var(--c-danger);
-            cursor: pointer;
-            border: 2px dashed var(--c-danger);
-            border-radius: 8px;
-            /* APPLE TOUCH TARGET FIX: Größeres Padding für Finger */
-            padding: 5px 10px; 
-            margin: 0 2px;
-            background: rgba(229, 62, 62, 0.05);
-            animation: pulse 2.5s infinite;
-            /* Verhindert Zoom beim Doppeltippen auf Mobile */
-            touch-action: manipulation; 
-        }
-        
-        .trigger:hover {
-            background: var(--c-danger);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(229, 62, 62, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0); }
-        }
-
-        .reset-btn {
-            background: transparent;
-            border: 1px solid #CBD5E0;
-            color: #718096;
-            padding: 8px 16px; /* Größer für Mobile */
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-        }
-        .reset-btn:hover { background: #E2E8F0; color: #2D3748; }
-
-        .explanation {
-            background: #fff;
-            color: #4A5568;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            padding-top: 10px;
-            border-top: 1px solid #EDF2F7;
-        }
-        
-        strong { color: var(--c-base); }
-
-        /* Helpers */
-        .vanish { opacity: 0 !important; transform: scale(0) !important; filter: blur(10px); }
-        .success-text { color: var(--c-action) !important; border-color: transparent !important; background: transparent !important; }
-
-        /* SANDBOX STYLES */
-        #sandbox {
-            border-left: 10px solid #805AD5; 
-            border: 2px solid #805AD5;
-            background: #fff;
-        }
-        #sandbox .module-header { color: #805AD5; }
-        
-        #sandbox .equation-stage {
-            height: auto !important; 
-            min-height: 160px;
-            padding: 30px;
-            overflow: visible;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            width: 100%;
-            flex-direction: column; /* Mobile first: untereinander */
-        }
-        @media(min-width: 500px) {
-            .input-group { flex-direction: row; } /* Desktop: nebeneinander */
-        }
-
-        input#custom-input {
-            width: 100%;
-            padding: 15px; /* Dicker für Finger */
-            font-size: 1.1rem;
-            font-family: 'Courier New', monospace;
-            border: 2px solid #E2E8F0;
-            border-radius: 8px;
-            outline: none;
-        }
-        input#custom-input:focus { border-color: #805AD5; }
-
-        button.action-btn {
-            background: #805AD5;
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        button.action-btn:hover { background: #6B46C1; }
-
-        .helper-chips {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        .chip {
-            background: #EDF2F7;
-            padding: 8px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-        .chip:hover { border-color: #805AD5; background: #E9D8FD; }
-
-    </style>
-</head>
-<body>
-
-    <h1>Log-Breaker PLATINUM 💎</h1>
-    <p class="sub">Jetzt mit allen Regeln und Mobile-Support.</p>
-
-    <div class="module" id="mod1">
-        <div class="module-header">
-            <span>REGEL 1: Der Rucksack (Potenzgesetz)</span>
-            <button class="reset-btn" onclick="resetMod1()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <span class="atom log-box">log<span class="base">a</span></span>
-            <span class="atom">(</span>
-            <span class="atom cargo">x</span>
-            <span class="atom trigger" id="trigger1" onclick="activateMod1()" style="vertical-align: super; font-size: 1.4rem; margin-left:-5px;">2</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Im Logarithmus steht eine Hochzahl ($x^2$).<br>
-            <strong>Aktion:</strong> Klicke die rote 2. Sie springt nach vorne. Aus "Hoch 2" wird "Mal 2".
-        </div>
-    </div>
-
-    <div class="module" id="mod2">
-        <div class="module-header">
-            <span>REGEL 2: Platzmangel (Produktregel)</span>
-            <button class="reset-btn" onclick="resetMod2()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <span class="atom log-box">log<span class="base">a</span></span>
-            <span class="atom">(</span>
-            <span class="atom cargo">x</span>
-            <span class="atom trigger" id="trigger2" onclick="activateMod2()" style="margin: 0 5px;">•</span>
-            <span class="atom cargo">y</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Im Logarithmus wird multipliziert ($x \cdot y$).<br>
-            <strong>Aktion:</strong> Klicke den Punkt. Der Logarithmus platzt auseinander. Aus "Mal" wird "Plus".
-        </div>
-    </div>
-
-    <div class="module" id="mod3">
-        <div class="module-header">
-            <span>REGEL 3: Der Keller (Quotientenregel)</span>
-            <button class="reset-btn" onclick="resetMod3()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <span class="atom log-box">log<span class="base">a</span></span>
-            <div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;">
-                <span class="atom cargo">x</span>
-                <span class="atom trigger" id="trigger3" onclick="activateMod3()" style="width: 40px; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span>
-                <span class="atom cargo" id="y-val">y</span>
-            </div>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Ein Bruch ($x$ geteilt durch $y$).<br>
-            <strong>Aktion:</strong> Klicke den Bruchstrich. Das $y$ kommt hoch, muss aber ein "Minus" akzeptieren.
-        </div>
-    </div>
-
-    <div class="module" id="mod4" style="border-left-color: var(--c-base);">
-        <div class="module-header">
-            <span>REGEL 4: Die Zwillinge (Basis Match)</span>
-            <button class="reset-btn" onclick="resetMod4()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <span class="atom log-box" id="log2-atom">log<span class="base">2</span></span>
-            <span class="atom">(</span>
-            <span class="atom trigger" id="base-match-trigger" onclick="activateMod4()" style="font-weight:bold; color:var(--c-base);">2</span>
-            <span class="atom cargo" id="power-x" style="vertical-align: super; font-size: 1.4rem;">x</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Basis (2) und Zahl (2) sind gleich.<br>
-            <strong>Aktion:</strong> Klicke die rote 2. Sie fressen sich auf. Nur $x$ bleibt.
-        </div>
-    </div>
-
-    <div class="module" id="mod5" style="border-left-color: #2D3748;">
-        <div class="module-header">
-            <span>REGEL 5: Todfeinde (ln und e)</span>
-            <button class="reset-btn" onclick="resetMod5()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <span class="atom trigger" id="ln-atom" onclick="activateMod5()">ln</span>
-            <span class="atom">(</span>
-            <span class="atom base" id="e-atom" style="font-size: 1.8rem;">e</span>
-            <span class="atom cargo" id="ln-x" style="vertical-align: super; font-size: 1.4rem;">x</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> $ln$ trifft auf $e$.<br>
-            <strong>Aktion:</strong> Klicke "ln". Sie vernichten sich. Nur $x$ bleibt.
-        </div>
-    </div>
-
-    <div class="module" id="mod6" style="border-left-color: var(--c-action);">
-        <div class="module-header">
-            <span>REGEL 6: Log von 1</span>
-            <button class="reset-btn" onclick="resetMod6()">Nochmal</button>
-        </div>
-        <div class="equation-stage" id="stage6">
-            <span class="atom log-box">log<span class="base">10</span></span>
-            <span class="atom">(</span>
-            <span class="atom trigger" id="one-trigger" onclick="activateMod6()">1</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Logarithmus von 1.<br>
-            <strong>Aktion:</strong> Klicke die 1. Ergebnis ist immer 0.
-        </div>
-    </div>
-
-    <div class="module" id="mod7" style="border-left-color: #000;">
-        <div class="module-header">
-            <span>NEU: REGEL 7: Der Turm (Inverse Eigenschaft)</span>
-            <button class="reset-btn" onclick="resetMod7()">Nochmal</button>
-        </div>
-        <div class="equation-stage">
-            <div style="display:flex; align-items:flex-start;">
-                <span class="atom base" id="tower-base" style="font-size: 3rem; margin-top: 20px; margin-right:5px;">a</span>
-                <div style="display:flex; align-items:center; margin-bottom: 20px;">
-                    <span class="atom trigger" id="tower-log" onclick="activateMod7()" style="font-size: 1.5rem;">log<sub style="color:var(--c-base)">a</sub></span>
-                    <span class="atom cargo" id="tower-x" style="font-size: 1.5rem; margin-left:2px;">(x)</span>
-                </div>
-            </div>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Die Basis unten ($a$) und die Basis im Logarithmus oben ($log_a$) sind gleich.<br>
-            <strong>Aktion:</strong> Klicke auf "log". Basis und Logarithmus löschen sich aus. Das $x$ fällt runter auf den Boden.
-        </div>
-    </div>
-
-    <div class="module" id="mod8" style="border-left-color: #805AD5;">
-        <div class="module-header">
-            <span>NEU: REGEL 8: Die Wurzel (Tarnkappe)</span>
-            <button class="reset-btn" onclick="resetMod8()">Nochmal</button>
-        </div>
-        <div class="equation-stage" id="root-stage">
-            <span class="atom log-box">log</span>
-            <span class="atom">(</span>
-            <span class="atom trigger" id="root-symbol" onclick="activateMod8()" style="font-size: 2.5rem; margin-right:-10px;">√</span>
-            <span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">x</span>
-            <span class="atom">)</span>
-        </div>
-        <div class="explanation">
-            <strong>Situation:</strong> Eine Wurzel $\sqrt{x}$. Das sieht böse aus.<br>
-            <strong>Aktion:</strong> Klicke die Wurzel. Sie verwandelt sich in den Exponenten $\frac{1}{2}$ (Rucksack). Danach gilt Regel 1!
-        </div>
-    </div>
-
-    <div class="module" id="sandbox">
-        <div class="module-header">
-            <span>🧪 DEINE SANDBOX (JETZT NOCH SCHLAUER)</span>
-            <button class="reset-btn" onclick="clearSandbox()">Leeren</button>
-        </div>
-        
-        <div class="helper-chips">
-            <span class="chip" onclick="setInput('a^(log_a(x))')">Der Turm</span>
-            <span class="chip" onclick="setInput('log(sqrt(x))')">Die Wurzel</span>
-            <span class="chip" onclick="setInput('log(x^2 * y / z)')">Der Klassiker</span>
-        </div>
-
-        <div class="input-group">
-            <input type="text" id="custom-input" placeholder="Tippe z.B. log(sqrt(x)) ...">
-            <button class="action-btn" onclick="parseInput()">Händchenmodus Starten 🖐️</button>
-        </div>
-
-        <div class="equation-stage" id="sandbox-stage">
-            <span style="color:#A0AEC0; font-size:1.2rem;">Warte auf Eingabe...</span>
-        </div>
-        
-        <div class="explanation" id="sandbox-text">
-            Tippe oben eine Aufgabe ein. Jetzt auch mit <code>sqrt(x)</code> und Türmen.
-        </div>
-    </div>
-
-
 <script>
     // =================================================================
-    // LOGIK FÜR MODULE 1-6 (ALTE REGELN)
+    // TEIL 1: DIE LERN-MODULE (1-8) - UNVERÄNDERT
+    // (Damit die oberen Kacheln funktionieren)
     // =================================================================
 
     // REGEL 1: Rucksack
@@ -448,60 +61,30 @@
     function activateMod6() { document.getElementById('stage6').innerHTML = `<span style="font-size:4rem; color:var(--c-action); animation:popIn 0.5s;">0</span>`; }
     function resetMod6() { document.querySelector('#mod6 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">10</span></span><span class="atom">(</span><span class="atom trigger" id="one-trigger" onclick="activateMod6()">1</span><span class="atom">)</span>`; }
 
-
-    // =================================================================
-    // NEU: LOGIK FÜR REGEL 7 & 8
-    // =================================================================
-    
-    // REGEL 7: DER TURM
+    // REGEL 7: Turm
     function activateMod7() {
         document.getElementById('tower-base').classList.add('vanish');
         document.getElementById('tower-log').classList.add('vanish');
         setTimeout(() => {
             const x = document.getElementById('tower-x');
-            // X fällt runter (wir simulieren das mit translate und scale)
-            x.style.transform = "translate(-30px, 30px) scale(2)";
-            x.style.color = "var(--c-action)";
-            x.innerText = "x";
+            x.style.transform = "translate(-30px, 30px) scale(2)"; x.style.color = "var(--c-action)"; x.innerText = "x";
         }, 300);
     }
     function resetMod7() {
-        document.querySelector('#mod7 .equation-stage').innerHTML = `
-             <div style="display:flex; align-items:flex-start;">
-                <span class="atom base" id="tower-base" style="font-size: 3rem; margin-top: 20px; margin-right:5px;">a</span>
-                <div style="display:flex; align-items:center; margin-bottom: 20px;">
-                    <span class="atom trigger" id="tower-log" onclick="activateMod7()" style="font-size: 1.5rem;">log<sub style="color:var(--c-base)">a</sub></span>
-                    <span class="atom cargo" id="tower-x" style="font-size: 1.5rem; margin-left:2px;">(x)</span>
-                </div>
-            </div>
-        `;
+        document.querySelector('#mod7 .equation-stage').innerHTML = `<div style="display:flex; align-items:flex-start;"><span class="atom base" id="tower-base" style="font-size: 3rem; margin-top: 20px; margin-right:5px;">a</span><div style="display:flex; align-items:center; margin-bottom: 20px;"><span class="atom trigger" id="tower-log" onclick="activateMod7()" style="font-size: 1.5rem;">log<sub style="color:var(--c-base)">a</sub></span><span class="atom cargo" id="tower-x" style="font-size: 1.5rem; margin-left:2px;">(x)</span></div></div>`;
     }
 
-    // REGEL 8: DIE WURZEL
+    // REGEL 8: Wurzel
     function activateMod8() {
-        document.getElementById('root-stage').innerHTML = `
-             <span class="atom log-box">log</span>
-             <span class="atom">(</span>
-             <span class="atom cargo">x</span>
-             <span class="atom success-text" style="vertical-align: super; font-size: 1.4rem; animation:popIn 0.5s;">1/2</span>
-             <span class="atom">)</span>
-        `;
-        // Wir tricksen: Wir zeigen jetzt an: "Das ist jetzt Regel 1!"
-        // In der echten App würde man hier jetzt Regel 1 aufrufen.
+        document.getElementById('root-stage').innerHTML = `<span class="atom log-box">log</span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom success-text" style="vertical-align: super; font-size: 1.4rem; animation:popIn 0.5s;">1/2</span><span class="atom">)</span>`;
     }
     function resetMod8() {
-        document.getElementById('root-stage').innerHTML = `
-            <span class="atom log-box">log</span>
-            <span class="atom">(</span>
-            <span class="atom trigger" id="root-symbol" onclick="activateMod8()" style="font-size: 2.5rem; margin-right:-10px;">√</span>
-            <span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">x</span>
-            <span class="atom">)</span>
-        `;
+        document.getElementById('root-stage').innerHTML = `<span class="atom log-box">log</span><span class="atom">(</span><span class="atom trigger" id="root-symbol" onclick="activateMod8()" style="font-size: 2.5rem; margin-right:-10px;">√</span><span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">x</span><span class="atom">)</span>`;
     }
 
 
     // =================================================================
-    // SANDBOX ENGINE (PLATINUM UPGRADE)
+    // TEIL 2: DIE NEUE, ROBUSTE SANDBOX ENGINE
     // =================================================================
     
     function setInput(val) {
@@ -514,194 +97,396 @@
         document.getElementById('sandbox-text').innerText = "Tippe oben eine Aufgabe ein.";
     }
 
+    // Start-Punkt: Wird vom Button aufgerufen
     function parseInput() {
         let raw = document.getElementById('custom-input').value;
-        raw = raw.replace(/\s/g, '');
-        raw = raw.replace(/log_[a-z0-9]+/g, 'log');
-        // NEU: Wurzel vereinfachen für Parser
-        raw = raw.replace(/wurzel/g, 'sqrt');
-        
         if(!raw) return;
-        renderTerm(raw);
+
+        // 1. REINIGUNG: Wir machen den Input computer-freundlich
+        raw = raw.replace(/\s/g, ''); // Leerzeichen weg
+        raw = raw.replace(/log_[a-z0-9]+/g, 'log'); // Basis ignorieren
+        raw = raw.replace(/wurzel/g, 'sqrt'); // Deutsch zu Englisch
+        
+        // Wir starten die Analyse
+        renderExpression(raw);
     }
 
-    function renderTerm(expr) {
+    // Diese Funktion entscheidet, was angezeigt wird
+    function renderExpression(expr) {
         const stage = document.getElementById('sandbox-stage');
         const info = document.getElementById('sandbox-text');
-        
-        // --- CHECK: DER TURM (a hoch log...) ---
-        if (expr.includes('^(') && expr.includes('log')) {
-            const parts = expr.split('^(');
-            const base = parts[0]; 
-            let exponentContent = parts[1];
-            if(exponentContent.endsWith(')')) exponentContent = exponentContent.slice(0, -1);
 
-            stage.innerHTML = `
-                <div style="display:flex; align-items:flex-start;">
-                    <span class="atom base" style="font-size: 3rem; margin-top: 20px;">${base}</span>
-                    <div style="border: 2px dashed var(--c-danger); padding:10px; border-radius:10px; background:rgba(229,62,62,0.05); margin-left:5px;">
-                        <div style="font-size:0.7rem; color:var(--c-danger); margin-bottom:5px; font-weight:bold;">DACHGESCHOSS (Erst hier aufräumen!)</div>
-                        <div id="exponent-stage" style="display:flex; align-items:center;">
+        // --- SCHUTZ VOR LEEREN EINGABEN ---
+        if (!expr) return;
+
+        // --- CHECK 1: DER TURM (Basis^log...) ---
+        // Erkennt: a^(log(...)) oder a^log(...)
+        if (expr.includes('^') && (expr.includes('log') || expr.includes('ln'))) {
+            // Wir prüfen, ob das log direkt nach dem ^ kommt (oder in Klammern danach)
+            const parts = expr.split('^');
+            const base = parts[0];
+            let exponent = parts.slice(1).join('^'); // Alles nach dem ersten ^
+            
+            // Wenn der Exponent mit log beginnt (oder (log...) )
+            if (exponent.includes('log') || exponent.includes('ln')) {
+                // Wir nehmen an, es ist ein Turm.
+                // Exponent säubern: Äußere Klammern entfernen, falls vorhanden: (log(x)) -> log(x)
+                if(exponent.startsWith('(') && exponent.endsWith(')')) {
+                    exponent = exponent.slice(1, -1);
+                }
+
+                stage.innerHTML = `
+                    <div style="display:flex; align-items:flex-start;">
+                        <span class="atom base" style="font-size: 3rem; margin-top: 20px;">${base}</span>
+                        <div style="border: 2px dashed var(--c-danger); padding:10px; border-radius:10px; background:rgba(229,62,62,0.05); margin-left:5px;">
+                            <div style="font-size:0.7rem; color:var(--c-danger); margin-bottom:5px; font-weight:bold;">DACHGESCHOSS</div>
+                            <div id="exponent-ui" style="display:flex; align-items:center;">
+                                <span class="atom trigger" onclick="solveTower('${exponent}')" style="font-size: 1.2rem;">${exponent}</span>
                             </div>
+                        </div>
                     </div>
-                </div>
-            `;
-            renderExponentInner(exponentContent);
-            info.innerHTML = "<strong>Der Turm!</strong> (Regel 7).<br>Wir müssen erst oben im Dachgeschoss aufräumen.";
-            return;
+                `;
+                info.innerHTML = "<strong>Der Turm!</strong> (Regel 7).<br>Klicke auf den Exponenten (Dachgeschoss), um ihn zu prüfen.";
+                return;
+            }
         }
 
-        // --- CHECK: DIE WURZEL ---
+        // --- CHECK 2: WURZEL (sqrt) ---
         if (expr.includes('sqrt')) {
-            const inside = expr.match(/sqrt\(([^)]+)\)/)[1];
+            // Finde was in der Wurzel steht: sqrt( ... )
+            const content = getInnerContent(expr, 'sqrt');
+            
             stage.innerHTML = `
                 <span class="atom log-box">log</span>
                 <span class="atom">(</span>
-                <span class="atom trigger" onclick="transformSqrt('${inside}')" style="font-size: 2.5rem; margin-right:-5px;">√</span>
-                <span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">${inside}</span>
+                <span class="atom trigger" onclick="transformSqrt('${content}')" style="font-size: 2.5rem; margin-right:-5px;">√</span>
+                <span class="atom cargo" style="border-top: 2px solid var(--c-danger); padding-top:5px;">${content}</span>
                 <span class="atom">)</span>
             `;
             info.innerHTML = "Eine <strong>Wurzel</strong>! Klick sie weg.";
             return;
         }
 
-        // --- CHECK: BRUCH ---
-        if (expr.includes('/')) {
-            const [num, den] = expr.split('/');
-            const numContent = extractLogContent(num) || num.replace('log', '');
-            const denContent = extractLogContent(den) || den.replace('log', '');
+        // --- CHECK 3: BRUCH / GETEILT ---
+        // Wir suchen ein / das NICHT in inneren Klammern steckt
+        const splitIndex = findSplitIndex(expr, '/');
+        if (splitIndex !== -1) {
+            const num = expr.substring(0, splitIndex);
+            const den = expr.substring(splitIndex + 1);
             
+            // Log-Wrapper entfernen falls vorhanden: log(A/B) -> A und B
+            const cleanNum = stripLogWrapper(num);
+            const cleanDen = stripLogWrapper(den);
+
             stage.innerHTML = `
                 <span class="atom log-box">log</span>
                 <div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;">
-                    <span class="atom cargo">${numContent}</span>
-                    <span class="atom trigger" onclick="transformDivide('${numContent}', '${denContent}')" style="width: 100%; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span>
-                    <span class="atom cargo">${denContent}</span>
+                    <span class="atom cargo">${cleanNum}</span>
+                    <span class="atom trigger" onclick="transformDivide('${cleanNum}', '${cleanDen}')" style="width: 100%; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span>
+                    <span class="atom cargo">${cleanDen}</span>
                 </div>
             `;
             info.innerHTML = "Ein <strong>Bruch</strong>! Klick auf den Strich.";
             return;
         }
 
-        // --- CHECK: SUMME ---
-        if (expr.includes('+')) {
-            const parts = expr.split('+');
+        // --- CHECK 4: MAL (PRODUKT) ---
+        const multIndex = findSplitIndex(expr, '*');
+        if (multIndex !== -1) {
+            const partA = expr.substring(0, multIndex);
+            const partB = expr.substring(multIndex + 1);
+            
+            const cleanA = stripLogWrapper(partA);
+            const cleanB = stripLogWrapper(partB);
+
             stage.innerHTML = `
-                <span class="atom">${parts[0]}</span>
-                <span class="atom trigger" onclick="transformSumToProduct()" style="font-size:2rem; color:var(--c-danger); margin:0 10px; cursor:pointer;">+</span>
-                <span class="atom">${parts[1]}</span>
+                <span class="atom log-box">log</span>(
+                <span class="atom cargo">${cleanA}</span>
+                <span class="atom trigger" onclick="transformMultiply('${cleanA}', '${cleanB}')" style="margin:0 5px;">•</span>
+                <span class="atom cargo">${cleanB}</span>
+                )
             `;
-            info.innerHTML = "Eine <strong>Summe</strong>? Klick auf das Plus.";
+            info.innerHTML = "Ein <strong>Produkt</strong> (*). Klick auf den Punkt.";
+            return;
+        }
+
+        // --- CHECK 5: SUMME (+) ---
+        // Falls der User schon log(a) + log(b) eingegeben hat
+        const plusIndex = findSplitIndex(expr, '+');
+        if (plusIndex !== -1) {
+            const partA = expr.substring(0, plusIndex);
+            const partB = expr.substring(plusIndex + 1);
+
+            stage.innerHTML = `
+                <span class="atom">${partA}</span>
+                <span class="atom trigger" onclick="transformSum('${partA}', '${partB}')" style="font-size:2rem; color:var(--c-danger); margin:0 10px;">+</span>
+                <span class="atom">${partB}</span>
+            `;
+            info.innerHTML = "Eine <strong>Summe</strong>. Klick auf Plus zum Zusammenfassen (oder lass es so, wenn du fertig bist).";
+            return;
+        }
+
+        // --- CHECK 6: POTENZ / RUCKSACK (^) ---
+        // log(x^2)
+        const powIndex = findSplitIndex(expr, '^');
+        if (powIndex !== -1) {
+            let base = expr.substring(0, powIndex);
+            let exp = expr.substring(powIndex + 1);
+            
+            base = stripLogWrapper(base); // log(x) -> x
+
+            stage.innerHTML = `
+                <span class="atom log-box">log</span>(
+                <span class="atom cargo">${base}</span>
+                <span class="atom trigger" id="sand-exp" onclick="transformPower('${base}', '${exp}')" style="vertical-align: super; font-size: 1.2rem;">${exp}</span>
+                )
+            `;
+            info.innerHTML = "Ein <strong>Rucksack</strong> (Exponent). Klick ihn an!";
             return;
         }
         
-        // --- CHECK: RUCKSACK (Mal vor dem Log) ---
-        if (expr.includes('*log')) {
-            const parts = expr.split('*log');
+        // --- CHECK 7: RUCKSACK VORNE (2*log) ---
+        if (expr.includes('*log') || expr.includes('*ln')) {
+            const parts = expr.split('*');
+            // Einfacher Check: Nimm alles vor dem letzten * als Faktor
+            // (Nicht perfekt, aber reicht für 2*log(x))
             const factor = parts[0];
-            const content = extractLogContent(expr) || "x";
-            
+            const rest = parts.slice(1).join('*');
+            const content = extractInner(rest);
+
             stage.innerHTML = `
-                <span class="atom trigger" onclick="transformRucksack('${factor}', '${content}')" style="font-size: 1.5rem; color:var(--c-danger); margin-right:5px; vertical-align:middle; cursor:pointer;">${factor} •</span>
+                <span class="atom trigger" onclick="transformFactor('${factor}', '${content}')" style="font-size: 1.5rem; color:var(--c-danger); margin-right:5px; vertical-align:middle;">${factor} •</span>
                 <span class="atom log-box">log</span>(<span class="atom cargo">${content}</span>)
             `;
-            info.innerHTML = "Ein <strong>Rucksack</strong> vor der Tür! Klick auf die Zahl.";
+            info.innerHTML = "Ein Faktor davor. Klick ihn an!";
             return;
         }
 
-        // --- CHECK: POTENZ ---
-        if (expr.includes('^')) {
-            const insideLog = extractLogContent(expr);
-            if(insideLog && insideLog.includes('^')) {
-                const parts = insideLog.split('^');
-                stage.innerHTML = `
-                    <span class="atom log-box">log</span>(
-                    <span class="atom cargo">${parts[0]}</span>
-                    <span class="atom trigger" id="sand-exp" onclick="transformPower('${parts[0]}', '${parts[1]}')" style="vertical-align: super; font-size: 1.2rem;">${parts[1]}</span>
-                    )
-                `;
-                info.innerHTML = "Rucksack innen! Klick ihn an.";
-                return;
-            }
-        }
-
-        // --- CHECK: MAL ---
-        if (expr.includes('*')) {
-            const insideLog = extractLogContent(expr);
-            if(insideLog && insideLog.includes('*')) {
-                const [a,b] = insideLog.split('*');
-                stage.innerHTML = `
-                    <span class="atom log-box">log</span>(
-                    <span class="atom cargo">${a}</span>
-                    <span class="atom trigger" onclick="transformMultiply('${a}','${b}')" style="margin:0 5px;">•</span>
-                    <span class="atom cargo">${b}</span>
-                    )
-                `;
-                info.innerHTML = "Mal-Rechnung innen! Klick den Punkt.";
-                return;
-            }
-        }
-
-        // FALLBACK
+        // FALLBACK (Nichts erkannt)
         stage.innerHTML = `<span style="font-family:monospace; font-size:1.5rem;">${expr}</span>`;
-        info.innerHTML = "Keine Regel erkannt. Versuch z.B. <code>log(sqrt(x))</code>";
+        info.innerHTML = "Konnte keine Regel anwenden. Versuch, Klammern zu setzen!<br>Beispiel: <code>log((a*b)/c)</code>";
     }
 
-    function renderExponentInner(innerExpr) {
-        const container = document.getElementById('exponent-stage');
-        if(innerExpr.includes('+')) {
-            const parts = innerExpr.split('+');
-            container.innerHTML = `
-                <span class="atom" style="font-size:1.2rem;">${parts[0]}</span>
-                <span class="atom trigger" style="font-size:1.5rem; margin:0 5px;">+</span>
-                <span class="atom" style="font-size:1.2rem;">${parts[1]}</span>
-            `;
-            container.onclick = function() {
-                container.innerHTML = `<span class="atom log-box">log</span>(<span class="atom cargo">x² • y³</span>)`;
-                document.getElementById('sandbox-text').innerHTML = "<strong>Zack!</strong> Ergebnis: $x^2 y^3$";
-            }
+
+    // --- HILFSFUNKTIONEN (DAS GEHIRN) ---
+
+    // Findet das Trennzeichen (+, *, /), ignoriert aber alles in Klammern!
+    function findSplitIndex(str, char) {
+        let depth = 0;
+        // Wir suchen von rechts nach links, um "log(x^2 * y / z)" richtig zu teilen (erst / dann *)
+        // ABER: Für "log(A * B)" suchen wir in der Klammer.
+        // Trick: Wir entfernen erst das äußere "log(" und ")", falls vorhanden.
+        let core = stripLogWrapper(str);
+        if (core === str) { 
+            // Kein log() drumrum? Dann suchen wir im ganzen String
         } else {
-            container.innerText = innerExpr;
+            // Log drumrum? Wir suchen nur im Inhalt!
+            // Aber Achtung: Der Index muss sich auf den Inhalt beziehen.
         }
+
+        // Simplerer Ansatz für Dyskalkulie-Tool: 
+        // Wir scannen einfach den String. Wenn wir in einer Klammer sind, ignorieren wir Zeichen.
+        // Wenn wir "log(...)" haben, ignorieren wir das log NICHT, wir wollen ja den Inhalt scannen.
+        
+        // Wir scannen NUR den Inhalt von log(...) wenn es damit anfängt
+        let scanStr = str;
+        let offset = 0;
+        if (str.startsWith('log(') && str.endsWith(')')) {
+            scanStr = str.slice(4, -1);
+            offset = 4;
+        } else if (str.startsWith('ln(') && str.endsWith(')')) {
+            scanStr = str.slice(3, -1);
+            offset = 3;
+        }
+
+        for (let i = 0; i < scanStr.length; i++) {
+            if (scanStr[i] === '(') depth++;
+            else if (scanStr[i] === ')') depth--;
+            else if (depth === 0 && scanStr[i] === char) {
+                return i + offset;
+            }
+        }
+        return -1;
     }
 
-    function extractLogContent(str) {
-        const match = str.match(/log\(([^)]+)\)/);
-        return match ? match[1] : null;
+    function stripLogWrapper(str) {
+        if (str.startsWith('log(') && str.endsWith(')')) return str.slice(4, -1);
+        if (str.startsWith('ln(') && str.endsWith(')')) return str.slice(3, -1);
+        return str;
     }
 
-    // --- TRANSFORMATIONS ---
-    function transformRucksack(factor, content) {
-        const stage = document.getElementById('sandbox-stage');
-        stage.innerHTML = `<span class="atom log-box">log</span>(<span class="atom cargo">${content}</span><span class="atom success-text" style="vertical-align:super; font-size:1.2rem; animation:popIn 0.5s;">${factor}</span>)`;
-        document.getElementById('sandbox-text').innerHTML = "Rucksack verstaut!";
+    function extractInner(str) {
+        // Holt Text aus log(...)
+        if (str.includes('(')) {
+            let start = str.indexOf('(');
+            let end = str.lastIndexOf(')');
+            return str.substring(start+1, end);
+        }
+        return str;
     }
+
+    function getInnerContent(str, funcName) {
+        // Holt Inhalt aus funcName(...)
+        let start = str.indexOf(funcName) + funcName.length + 1; // +1 für (
+        // Finde passendes End-Klammer
+        let depth = 1;
+        let end = start;
+        while (depth > 0 && end < str.length) {
+            if (str[end] === '(') depth++;
+            if (str[end] === ')') depth--;
+            end++;
+        }
+        return str.substring(start, end-1);
+    }
+
+    // --- TRANSFORMATIONS (WAS PASSIERT BEIM KLICK) ---
+    // Der Trick: Statt nur Text zu zeigen, rufen wir eine Funktion auf, 
+    // die Knöpfe rendert, um WEITER zu machen!
+
     function transformDivide(num, den) {
         const stage = document.getElementById('sandbox-stage');
-        stage.innerHTML = `<span class="atom log-box">log</span>(${num}) <span class="atom success-text" style="font-size:2rem; animation:popIn 0.5s;">-</span> <span class="atom log-box">log</span>(${den})`;
-        document.getElementById('sandbox-text').innerHTML = "Bruch zerlegt!";
-    }
-    function transformSumToProduct() {
-        const stage = document.getElementById('sandbox-stage');
-        stage.innerHTML = `<span class="atom log-box">log</span>(<span class="atom cargo">A • B</span>)`;
-        document.getElementById('sandbox-text').innerHTML = "Zusammengefasst!";
-    }
-    function transformMultiply(a, b) {
-        const stage = document.getElementById('sandbox-stage');
-        stage.innerHTML = `<span class="atom log-box">log</span>(${a}) <span class="atom success-text" style="font-size:2rem; animation:popIn 0.5s;">+</span> <span class="atom log-box">log</span>(${b})`;
-        document.getElementById('sandbox-text').innerHTML = "Produkt getrennt!";
-    }
-    function transformPower(base, exp) {
-        const stage = document.getElementById('sandbox-stage');
-        stage.innerHTML = `<span class="atom success-text" style="font-size: 2rem; margin-right: 10px; animation:popIn 0.5s;">${exp} •</span><span class="atom log-box">log</span>(<span class="atom cargo">${base}</span>)`;
-        document.getElementById('sandbox-text').innerHTML = "Rucksack runter!";
-    }
-    function transformSqrt(content) {
-        const stage = document.getElementById('sandbox-stage');
-        stage.innerHTML = `<span class="atom log-box">log</span>(<span class="atom cargo">${content}</span><span class="atom success-text" style="vertical-align:super; font-size:1.2rem; animation:popIn 0.5s;">1/2</span>)`;
-        document.getElementById('sandbox-text').innerHTML = "Wurzel ist weg! Jetzt ist es ein 1/2 Rucksack.";
+        const info = document.getElementById('sandbox-text');
+        
+        stage.innerHTML = `
+            <div style="text-align:center;">
+                <div style="margin-bottom:15px; font-size:1.8rem;">
+                    <span class="atom log-box">log</span>(${num}) 
+                    <span class="success-text">-</span> 
+                    <span class="atom log-box">log</span>(${den})
+                </div>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button class="action-btn" onclick="continueWith('log(${num})')">Linken Teil weiter?</button>
+                    <button class="action-btn" onclick="continueWith('log(${den})')">Rechten Teil weiter?</button>
+                </div>
+            </div>
+        `;
+        info.innerHTML = "Bruch zerlegt! Wähle einen Teil aus, um dort weiterzumachen.";
     }
 
+    function transformMultiply(a, b) {
+        const stage = document.getElementById('sandbox-stage');
+        const info = document.getElementById('sandbox-text');
+        
+        stage.innerHTML = `
+            <div style="text-align:center;">
+                <div style="margin-bottom:15px; font-size:1.8rem;">
+                    <span class="atom log-box">log</span>(${a}) 
+                    <span class="success-text">+</span> 
+                    <span class="atom log-box">log</span>(${b})
+                </div>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button class="action-btn" onclick="continueWith('log(${a})')">Linken Teil weiter?</button>
+                    <button class="action-btn" onclick="continueWith('log(${b})')">Rechten Teil weiter?</button>
+                </div>
+            </div>
+        `;
+        info.innerHTML = "Produkt zerlegt! Wähle einen Teil aus.";
+    }
+
+    function transformPower(base, exp) {
+        const stage = document.getElementById('sandbox-stage');
+        const info = document.getElementById('sandbox-text');
+        
+        // Animation
+        const t = document.getElementById('sand-exp');
+        if(t) {
+             t.style.transform = "translate(-100px, 0px)"; 
+             t.style.color = "var(--c-action)";
+        }
+
+        setTimeout(() => {
+            stage.innerHTML = `
+                <div style="text-align:center;">
+                    <div style="margin-bottom:15px; font-size:1.8rem;">
+                        <span class="success-text">${exp} • </span>
+                        <span class="atom log-box">log</span>(${base})
+                    </div>
+                    <button class="action-btn" onclick="continueWith('log(${base})')">Den Rest zerlegen?</button>
+                </div>
+            `;
+            info.innerHTML = "Rucksack unten! Willst du den Rest noch knacken?";
+        }, 300);
+    }
+
+    function transformSqrt(content) {
+        const stage = document.getElementById('sandbox-stage');
+        stage.innerHTML = `
+             <div style="text-align:center;">
+                <div style="margin-bottom:15px; font-size:1.8rem;">
+                    <span class="atom log-box">log</span>(
+                    <span class="atom cargo">${content}</span>
+                    <span class="success-text" style="vertical-align:super; font-size:1rem;">1/2</span>
+                    )
+                </div>
+                <button class="action-btn" onclick="continueWith('log(${content}^(1/2))')">Jetzt Rucksack werfen!</button>
+            </div>
+        `;
+        document.getElementById('sandbox-text').innerHTML = "Wurzel ist jetzt Hoch 1/2. Klick den Button, um weiterzumachen!";
+    }
+
+    function transformFactor(factor, content) {
+        const stage = document.getElementById('sandbox-stage');
+        stage.innerHTML = `
+             <div style="text-align:center;">
+                <div style="margin-bottom:15px; font-size:1.8rem;">
+                    <span class="atom log-box">log</span>(
+                    <span class="atom cargo">${content}</span>
+                    <span class="success-text" style="vertical-align:super; font-size:1rem;">${factor}</span>
+                    )
+                </div>
+                <div style="color:var(--c-action);">Der Faktor ist jetzt wieder ein Exponent!</div>
+            </div>
+        `;
+    }
+
+    function transformSum(a, b) {
+        // log(a) + log(b) -> log(a*b)
+        // a und b sind strings wie "log(x)"
+        const innerA = extractInner(a);
+        const innerB = extractInner(b);
+        
+        const stage = document.getElementById('sandbox-stage');
+        stage.innerHTML = `
+            <div style="font-size:1.8rem; color:var(--c-action);">
+                <span class="atom log-box">log</span>(${innerA} • ${innerB})
+            </div>
+        `;
+        document.getElementById('sandbox-text').innerHTML = "Zusammengefasst!";
+    }
+
+    function solveTower(exponent) {
+        // Wenn man beim Turm auf den Exponenten klickt
+        const stage = document.getElementById('sandbox-stage');
+        
+        // Prüfen ob der Exponent noch "schmutzig" ist (Rechenzeichen enthält)
+        if (exponent.includes('+') || exponent.includes('-') || exponent.includes('/')) {
+            // Noch nicht fertig
+             stage.innerHTML = `
+                <div style="color:var(--c-danger); font-size:1.5rem; text-align:center;">
+                    Halt! Das Dachgeschoss ist unordentlich!<br>
+                    <code>${exponent}</code><br>
+                    Räum das erst auf (Tipp es oben ein), bis nur noch <b>log(...)</b> da steht.
+                </div>
+            `;
+        } else {
+            // Wir nehmen an es ist sauber log(...)
+            let content = extractInner(exponent);
+            stage.innerHTML = `
+                <div style="font-size:3rem; color:var(--c-action); animation:popIn 0.5s;">
+                    ${content}
+                </div>
+            `;
+            document.getElementById('sandbox-text').innerHTML = "<strong>Zack!</strong> Basis und Log weg. Das Ergebnis ist gelandet.";
+        }
+    }
+
+    // Die Magie: Das neue Input setzen und sofort parsen
+    function continueWith(newExpr) {
+        document.getElementById('custom-input').value = newExpr;
+        parseInput();
+    }
+
+    // CSS Inject
     const styleSheet = document.createElement("style");
     styleSheet.innerText = `
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
@@ -709,5 +494,3 @@
     document.head.appendChild(styleSheet);
 
 </script>
-</body>
-</html>
