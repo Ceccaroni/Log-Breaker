@@ -368,7 +368,7 @@
         <div class="helper-chips">
             <span class="chip" onclick="setInput('a^(log_a(x))')">Der Turm</span>
             <span class="chip" onclick="setInput('log(sqrt(x))')">Die Wurzel</span>
-            <span class="chip" onclick="setInput('log(x^2 * y / z)')">Der Klassiker</span>
+            <span class="chip" onclick="setInput('log((x^3 * y) / sqrt(z))')">Alles drin (Screenshot)</span>
         </div>
 
         <div class="input-group">
@@ -387,11 +387,8 @@
 
 
 <script>
-    // =================================================================
-    // LOGIK FÜR MODULE 1-8 (LERNMODUS)
-    // =================================================================
+    // --- MODULE LOGIK ---
 
-    // REGEL 1: Rucksack
     function activateMod1() {
         const t = document.getElementById('trigger1');
         t.style.transform = "translate(-180px, 0px)"; t.style.color = "var(--c-action)"; t.style.borderColor = "transparent"; t.style.background = "transparent"; t.style.zIndex = "100";
@@ -401,7 +398,6 @@
         document.querySelector('#mod1 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom trigger" id="trigger1" onclick="activateMod1()" style="vertical-align: super; font-size: 1.4rem; margin-left:-5px;">2</span><span class="atom">)</span>`;
     }
 
-    // REGEL 2: Produkt
     function activateMod2() {
         document.querySelector('#mod2 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom cargo">(x)</span><span class="atom success-text" style="font-size:3rem; margin:0 15px; animation:popIn 0.5s;">+</span><span class="atom log-box" style="animation:popIn 0.5s;">log<span class="base">a</span></span><span class="atom cargo">(y)</span>`;
     }
@@ -409,7 +405,6 @@
         document.querySelector('#mod2 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom trigger" id="trigger2" onclick="activateMod2()" style="margin: 0 5px;">•</span><span class="atom cargo">y</span><span class="atom">)</span>`;
     }
 
-    // REGEL 3: Bruch
     function activateMod3() {
         document.querySelector('#mod3 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><span class="atom cargo">(x)</span><span class="atom success-text" style="font-size:3rem; margin:0 15px; animation:popIn 0.5s;">-</span><span class="atom log-box" style="animation:popIn 0.5s;">log<span class="base">a</span></span><span class="atom cargo">(y)</span>`;
     }
@@ -417,7 +412,6 @@
         document.querySelector('#mod3 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">a</span></span><div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;"><span class="atom cargo">x</span><span class="atom trigger" id="trigger3" onclick="activateMod3()" style="width: 40px; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span><span class="atom cargo" id="y-val">y</span></div>`;
     }
 
-    // REGEL 4: Zwillinge
     function activateMod4() {
         const logPart = document.getElementById('log2-atom');
         const trigger = document.getElementById('base-match-trigger');
@@ -431,7 +425,6 @@
         x.style = "vertical-align: super; font-size: 1.4rem;"; x.innerText = "x"; x.style.color = "var(--c-cargo)";
     }
 
-    // REGEL 5: Todfeinde
     function activateMod5() { 
         document.getElementById('ln-atom').classList.add('vanish');
         document.getElementById('e-atom').classList.add('vanish');
@@ -444,11 +437,9 @@
         document.querySelector('#mod5 .equation-stage').innerHTML = `<span class="atom trigger" id="ln-atom" onclick="activateMod5()">ln</span><span class="atom">(</span><span class="atom base" id="e-atom" style="font-size: 1.8rem;">e</span><span class="atom cargo" id="ln-x" style="vertical-align: super; font-size: 1.4rem;">x</span><span class="atom">)</span>`;
     }
 
-    // REGEL 6: Log 1
     function activateMod6() { document.getElementById('stage6').innerHTML = `<span style="font-size:4rem; color:var(--c-action); animation:popIn 0.5s;">0</span>`; }
     function resetMod6() { document.querySelector('#mod6 .equation-stage').innerHTML = `<span class="atom log-box">log<span class="base">10</span></span><span class="atom">(</span><span class="atom trigger" id="one-trigger" onclick="activateMod6()">1</span><span class="atom">)</span>`; }
 
-    // REGEL 7: Turm
     function activateMod7() {
         document.getElementById('tower-base').classList.add('vanish');
         document.getElementById('tower-log').classList.add('vanish');
@@ -461,7 +452,6 @@
         document.querySelector('#mod7 .equation-stage').innerHTML = `<div style="display:flex; align-items:flex-start;"><span class="atom base" id="tower-base" style="font-size: 3rem; margin-top: 20px; margin-right:5px;">a</span><div style="display:flex; align-items:center; margin-bottom: 20px;"><span class="atom trigger" id="tower-log" onclick="activateMod7()" style="font-size: 1.5rem;">log<sub style="color:var(--c-base)">a</sub></span><span class="atom cargo" id="tower-x" style="font-size: 1.5rem; margin-left:2px;">(x)</span></div></div>`;
     }
 
-    // REGEL 8: Wurzel
     function activateMod8() {
         document.getElementById('root-stage').innerHTML = `<span class="atom log-box">log</span><span class="atom">(</span><span class="atom cargo">x</span><span class="atom success-text" style="vertical-align: super; font-size: 1.4rem; animation:popIn 0.5s;">1/2</span><span class="atom">)</span>`;
     }
@@ -471,7 +461,7 @@
 
 
     // =================================================================
-    // SANDBOX ENGINE V3 (REPAIRED & ROBUST)
+    // SANDBOX ENGINE V3 (REPAIRED)
     // =================================================================
     
     function setInput(val) {
@@ -487,33 +477,24 @@
     function parseInput() {
         let raw = document.getElementById('custom-input').value;
         if(!raw) return;
-
-        // Reinigung
         raw = raw.replace(/\s/g, ''); 
         raw = raw.replace(/log_[a-z0-9]+/g, 'log');
         raw = raw.replace(/wurzel/g, 'sqrt');
-        
         renderExpression(raw);
     }
 
-    // Der schlaue Entscheider: Was liegt ganz oben?
     function renderExpression(expr) {
         const stage = document.getElementById('sandbox-stage');
         const info = document.getElementById('sandbox-text');
 
         if (!expr) return;
 
-        // 1. CHECK: TURM (a^...)
-        // Wenn ^ auf Ebene 0 liegt
+        // 1. CHECK: TURM
         const powIndex = findSplitIndex(expr, '^');
         if (powIndex !== -1 && (expr.includes('log') || expr.includes('ln'))) {
             const base = expr.substring(0, powIndex);
             let exponent = expr.substring(powIndex + 1);
-            
-            // Wenn Exponent geklammert ist (log(x)), Klammern entfernen
-            if(exponent.startsWith('(') && exponent.endsWith(')')) {
-                exponent = exponent.slice(1, -1);
-            }
+            if(exponent.startsWith('(') && exponent.endsWith(')')) { exponent = exponent.slice(1, -1); }
 
             stage.innerHTML = `
                 <div style="display:flex; align-items:flex-start;">
@@ -528,7 +509,7 @@
             return;
         }
 
-        // 2. CHECK: SUMME/DIFFERENZ (+ oder -) auf Ebene 0
+        // 2. CHECK: SUMME/DIFFERENZ
         const plusIndex = findSplitIndex(expr, '+');
         if (plusIndex !== -1) {
             const partA = expr.substring(0, plusIndex);
@@ -538,12 +519,11 @@
             return;
         }
 
-        // 3. CHECK: PRODUKT (*) auf Ebene 0 (Faktor vor Log)
+        // 3. CHECK: PRODUKT (Faktor vor Log)
         const multIndex = findSplitIndex(expr, '*');
         if (multIndex !== -1) {
             const partA = expr.substring(0, multIndex);
             const partB = expr.substring(multIndex + 1);
-            // Check ob partB ein Log ist -> Rucksack Regel
             if (partB.startsWith('log') || partB.startsWith('ln')) {
                  const inner = extractInner(partB);
                  stage.innerHTML = `<span class="atom trigger" onclick="transformRucksack('${partA}', '${inner}')" style="font-size: 1.5rem; color:var(--c-danger); margin-right:5px;">${partA} •</span><span class="atom log-box">log</span>(<span class="atom cargo">${inner}</span>)`;
@@ -556,8 +536,6 @@
         if (expr.startsWith('log') || expr.startsWith('ln')) {
             const inner = extractInner(expr);
             
-            // Jetzt schauen wir IN den Log
-            
             // WURZEL?
             if (inner.includes('sqrt')) {
                 const content = getInnerContent(inner, 'sqrt');
@@ -566,17 +544,19 @@
                 return;
             }
 
-            // BRUCH? (/) auf Ebene 0 im Log
+            // BRUCH?
             const divIndex = findSplitIndex(inner, '/');
             if (divIndex !== -1) {
                 const num = inner.substring(0, divIndex);
                 const den = inner.substring(divIndex + 1);
-                stage.innerHTML = `<span class="atom log-box">log</span><div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;"><span class="atom cargo">${num}</span><span class="atom trigger" onclick="transformDivide('${num}', '${den}')" style="width: 100%; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span><span class="atom cargo">${den}</span></div>`;
+                const cleanNum = stripOuterBrackets(num);
+                const cleanDen = stripOuterBrackets(den);
+                stage.innerHTML = `<div style="text-align:center;"><div style="margin-bottom:10px;"><span class="atom log-box">log</span><div style="display:inline-flex; flex-direction:column; align-items:center; margin: 0 10px; vertical-align:middle;"><span class="atom cargo">${cleanNum}</span><span class="atom trigger" onclick="transformDivide('${cleanNum}', '${cleanDen}')" style="width: 100%; height: 4px; border:none; background:var(--c-danger); margin: 2px 0;"></span><span class="atom cargo">${cleanDen}</span></div></div></div>`;
                 info.innerHTML = "Bruch im Log! Zerlegen.";
                 return;
             }
 
-            // PRODUKT? (*) auf Ebene 0 im Log
+            // PRODUKT?
             const innerMultIndex = findSplitIndex(inner, '*');
             if (innerMultIndex !== -1) {
                 const a = inner.substring(0, innerMultIndex);
@@ -586,7 +566,7 @@
                 return;
             }
 
-            // POTENZ? (^) auf Ebene 0 im Log
+            // POTENZ?
             const innerPowIndex = findSplitIndex(inner, '^');
             if (innerPowIndex !== -1) {
                 const base = inner.substring(0, innerPowIndex);
@@ -597,21 +577,40 @@
             }
         }
 
-        // FALLBACK
         stage.innerHTML = `<span style="font-family:monospace; font-size:1.5rem;">${expr}</span>`;
-        info.innerHTML = "Konnte keine Regel anwenden. Versuch, Klammern zu setzen! (z.B. <code>log((a*b)/c)</code>)";
+        info.innerHTML = "Keine Regel anwenden. Versuch, Klammern zu setzen!";
     }
 
-
-    // --- DAS GEHIRN: KLAMMERN ZÄHLEN ---
+    // --- HELPER ---
     function findSplitIndex(str, char) {
         let depth = 0;
+        // Speziell für log/ln: Wenn wir IM log sind, ignorieren wir den Wrapper
+        let startIdx = 0;
+        if ((str.startsWith('log(') || str.startsWith('ln(')) && str.endsWith(')')) {
+             return -1; // Wir wollen nicht im Log splitten wenn wir außen sind
+        }
+
         for (let i = 0; i < str.length; i++) {
             if (str[i] === '(') depth++;
             else if (str[i] === ')') depth--;
             else if (depth === 0 && str[i] === char) return i;
         }
         return -1;
+    }
+
+    function stripOuterBrackets(str) {
+        if(str.startsWith('(') && str.endsWith(')')) {
+            // Check if valid pair
+            let depth = 0;
+            let valid = true;
+            for(let i=0; i<str.length-1; i++) {
+                if(str[i] === '(') depth++;
+                if(str[i] === ')') depth--;
+                if(depth === 0) valid = false; // Klammer ging zu früh zu
+            }
+            if(valid) return str.slice(1,-1);
+        }
+        return str;
     }
 
     function extractInner(str) {
@@ -636,7 +635,6 @@
     }
 
     // --- BUTTON ACTIONS ---
-    
     function continueWith(newExpr) {
         document.getElementById('custom-input').value = newExpr;
         parseInput();
@@ -694,7 +692,6 @@
         }
     }
 
-    // CSS Inject
     const styleSheet = document.createElement("style");
     styleSheet.innerText = `
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
@@ -702,3 +699,5 @@
     document.head.appendChild(styleSheet);
 
 </script>
+</body>
+</html>
